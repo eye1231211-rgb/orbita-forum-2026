@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1794257724321,
+      "tag": "0000_loving_redwing",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1794261045757,
+      "tag": "0001_famous_inertia",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1794300000000,
+      "tag": "0002_reu_demo_context",
+      "breakpoints": true
+    }
+  ]
+}

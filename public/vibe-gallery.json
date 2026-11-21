@@ -1,0 +1,592 @@
+{
+ "title": "Вайб Плехановки",
+ "note": "Съёмка автора проекта. Люди на снимках — с их согласия.",
+ "groups": [
+  {
+   "id": "vecher",
+   "title": "Вечерние корпуса"
+  },
+  {
+   "id": "fasady",
+   "title": "Фасады"
+  },
+  {
+   "id": "zal",
+   "title": "Исторический зал"
+  },
+  {
+   "id": "uchebnoe",
+   "title": "Учебные будни"
+  },
+  {
+   "id": "dvor",
+   "title": "Двор и спорт"
+  },
+  {
+   "id": "prazdniki",
+   "title": "Праздники"
+  },
+  {
+   "id": "detali",
+   "title": "Детали"
+  },
+  {
+   "id": "lyudi",
+   "title": "Люди"
+  }
+ ],
+ "photos": [
+  {
+   "id": "glavnyi-korpus-vecherom",
+   "group": "vecher",
+   "caption": "Главный корпус в подсветке",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "kolonnada-vecherom",
+   "group": "vecher",
+   "caption": "Колоннада под вечерним небом",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "novyi-korpus-vecherom",
+   "group": "vecher",
+   "caption": "Новый корпус после занятий",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "fasad-noch",
+   "group": "vecher",
+   "caption": "Фасад с вывеской РЭУ.РФ ночью",
+   "width": 1280,
+   "height": 853,
+   "shape": "wide"
+  },
+  {
+   "id": "bukvy-fasad",
+   "group": "vecher",
+   "caption": "Золотые буквы на фасаде",
+   "width": 1280,
+   "height": 853,
+   "shape": "wide"
+  },
+  {
+   "id": "gerb-nad-vhodom",
+   "group": "vecher",
+   "caption": "Герб и название над входом",
+   "width": 1280,
+   "height": 1280,
+   "shape": "wide"
+  },
+  {
+   "id": "elka-u-korpusa",
+   "group": "prazdniki",
+   "caption": "Ёлка у главного корпуса",
+   "width": 1050,
+   "height": 1400,
+   "shape": "tall"
+  },
+  {
+   "id": "girlyandy-fasad",
+   "group": "prazdniki",
+   "caption": "Гирлянды и подсвеченный фасад",
+   "width": 1050,
+   "height": 1400,
+   "shape": "tall"
+  },
+  {
+   "id": "elka-vhod",
+   "group": "prazdniki",
+   "caption": "Ёлка у входа в декабре",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "pervyi-sneg",
+   "group": "prazdniki",
+   "caption": "Первый снег во дворе",
+   "width": 720,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "novogodnie-ogni",
+   "group": "prazdniki",
+   "caption": "Новогодние огни на Стремянном",
+   "width": 897,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "120-let",
+   "group": "prazdniki",
+   "caption": "120 лет университету",
+   "width": 1050,
+   "height": 1400,
+   "shape": "tall"
+  },
+  {
+   "id": "aktovyi-zal",
+   "group": "zal",
+   "caption": "Исторический актовый зал",
+   "width": 1280,
+   "height": 853,
+   "shape": "wide"
+  },
+  {
+   "id": "lyustry-zala",
+   "group": "zal",
+   "caption": "Люстры и своды зала",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "zal-pered-konferenciei",
+   "group": "zal",
+   "caption": "Зал перед конференцией",
+   "width": 1280,
+   "height": 853,
+   "shape": "wide"
+  },
+  {
+   "id": "balkony-zala",
+   "group": "zal",
+   "caption": "Балконы и стеклянный пол",
+   "width": 720,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "kolonny-stoly",
+   "group": "zal",
+   "caption": "Колонны и ряды столов",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "chasy-i-gerb",
+   "group": "zal",
+   "caption": "Часы и герб под сводом",
+   "width": 720,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "potochnaya-auditoriya",
+   "group": "uchebnoe",
+   "caption": "Пустая поточная аудитория",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "polnyi-zal",
+   "group": "uchebnoe",
+   "caption": "Полный зал на мероприятии",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "scena-koncerta",
+   "group": "uchebnoe",
+   "caption": "Сцена студенческого концерта",
+   "width": 720,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "spiral-lestnicy",
+   "group": "uchebnoe",
+   "caption": "Спираль лестницы в атриуме",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "shahmatnyi-pol",
+   "group": "uchebnoe",
+   "caption": "Шахматный пол во внутреннем дворе",
+   "width": 1050,
+   "height": 1400,
+   "shape": "tall"
+  },
+  {
+   "id": "holl-korpusa",
+   "group": "uchebnoe",
+   "caption": "Холл нового корпуса",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "peregovornaya",
+   "group": "uchebnoe",
+   "caption": "Переговорная с видом на город",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "zashchita-kursovoi",
+   "group": "uchebnoe",
+   "caption": "Защита курсовой в зале",
+   "width": 1280,
+   "height": 960,
+   "shape": "wide"
+  },
+  {
+   "id": "kursovaya-rabota",
+   "group": "uchebnoe",
+   "caption": "Курсовая работа и герб университета",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "futbolnoe-pole",
+   "group": "dvor",
+   "caption": "Футбольное поле во дворе",
+   "width": 1050,
+   "height": 1400,
+   "shape": "tall"
+  },
+  {
+   "id": "dvor-kolodec",
+   "group": "dvor",
+   "caption": "Двор-колодец с полем",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "basketbolnaya-ploshchadka",
+   "group": "dvor",
+   "caption": "Баскетбольная площадка у корпуса",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "alleya",
+   "group": "dvor",
+   "caption": "Аллея между корпусами",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "skver-osenyu",
+   "group": "dvor",
+   "caption": "Университетский сквер осенью",
+   "width": 720,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "ten-derevev",
+   "group": "dvor",
+   "caption": "Тень деревьев в парке",
+   "width": 1280,
+   "height": 960,
+   "shape": "wide"
+  },
+  {
+   "id": "kolonnada-dnem",
+   "group": "fasady",
+   "caption": "Колоннада днём",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "vyveska-krupno",
+   "group": "fasady",
+   "caption": "Вывеска крупным планом",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "korpus-nebo",
+   "group": "fasady",
+   "caption": "Корпус на фоне синего неба",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "istoricheskii-fasad",
+   "group": "fasady",
+   "caption": "Исторический фасад с гербом",
+   "width": 1050,
+   "height": 1400,
+   "shape": "tall"
+  },
+  {
+   "id": "svet-v-oknah",
+   "group": "fasady",
+   "caption": "Вечерний свет в окнах",
+   "width": 1280,
+   "height": 960,
+   "shape": "wide"
+  },
+  {
+   "id": "kolonny-sumerki",
+   "group": "fasady",
+   "caption": "Колонны в сумерках",
+   "width": 1280,
+   "height": 960,
+   "shape": "wide"
+  },
+  {
+   "id": "universitet-talantlivyh",
+   "group": "fasady",
+   "caption": "«Университет талантливых людей»",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "steklyannye-yarusy",
+   "group": "fasady",
+   "caption": "Стеклянные ярусы нового корпуса",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "perehod-mezhdu-korpusami",
+   "group": "fasady",
+   "caption": "Переход между корпусами",
+   "width": 1280,
+   "height": 960,
+   "shape": "wide"
+  },
+  {
+   "id": "otrazheniya-v-stekle",
+   "group": "fasady",
+   "caption": "Отражения в стекле",
+   "width": 1050,
+   "height": 1400,
+   "shape": "tall"
+  },
+  {
+   "id": "cvetnaya-podsvetka",
+   "group": "fasady",
+   "caption": "Цветная подсветка этажей",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "staroe-zdanie",
+   "group": "fasady",
+   "caption": "Старое здание с фонарями",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "vyveska-skvoz-listvu",
+   "group": "fasady",
+   "caption": "Вывеска сквозь листву",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "kupol-ryadom",
+   "group": "detali",
+   "caption": "Купол храма рядом с кампусом",
+   "width": 720,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "hram-u-stremyannogo",
+   "group": "detali",
+   "caption": "Храм у Стремянного переулка",
+   "width": 720,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "kapitel",
+   "group": "detali",
+   "caption": "Капитель колонны",
+   "width": 1280,
+   "height": 687,
+   "shape": "wide"
+  },
+  {
+   "id": "linii-korpusa",
+   "group": "detali",
+   "caption": "Линии корпуса крупным планом",
+   "width": 1280,
+   "height": 884,
+   "shape": "wide"
+  },
+  {
+   "id": "lepnina",
+   "group": "detali",
+   "caption": "Лепнина над окнами",
+   "width": 720,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "ukazatel-metro",
+   "group": "detali",
+   "caption": "Указатель метро с названием университета",
+   "width": 1280,
+   "height": 960,
+   "shape": "wide"
+  },
+  {
+   "id": "prolet-lestnicy",
+   "group": "detali",
+   "caption": "Пролёт лестницы",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "zakat-za-oknami",
+   "group": "detali",
+   "caption": "Закат за окнами корпуса",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "svet-v-okne",
+   "group": "detali",
+   "caption": "Свет в окне поздним вечером",
+   "width": 1400,
+   "height": 1050,
+   "shape": "wide"
+  },
+  {
+   "id": "zheltyi-svet",
+   "group": "detali",
+   "caption": "Жёлтый свет в коридоре",
+   "width": 1280,
+   "height": 853,
+   "shape": "wide"
+  },
+  {
+   "id": "dveri-korpusa",
+   "group": "detali",
+   "caption": "Двери старого корпуса",
+   "width": 903,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "korpus-cherno-beloe",
+   "group": "detali",
+   "caption": "Корпус в чёрно-белом",
+   "width": 1136,
+   "height": 960,
+   "shape": "wide"
+  },
+  {
+   "id": "kofe-pered-parami",
+   "group": "lyudi",
+   "caption": "Кофе перед парами",
+   "width": 640,
+   "height": 853,
+   "shape": "tall"
+  },
+  {
+   "id": "vypusknica-v-zale",
+   "group": "lyudi",
+   "caption": "Выпускница в актовом зале",
+   "width": 853,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "diplom-v-rukah",
+   "group": "lyudi",
+   "caption": "Диплом в руках",
+   "width": 853,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "u-pamyatnika",
+   "group": "lyudi",
+   "caption": "У памятника в холле",
+   "width": 853,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "na-balkone-zala",
+   "group": "lyudi",
+   "caption": "На балконе исторического зала",
+   "width": 853,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "lestnica-mezhdu-parami",
+   "group": "lyudi",
+   "caption": "Лестница между парами",
+   "width": 1280,
+   "height": 854,
+   "shape": "wide"
+  },
+  {
+   "id": "vesna-vo-dvore",
+   "group": "lyudi",
+   "caption": "Весна во дворе университета",
+   "width": 853,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "portret-u-peril",
+   "group": "lyudi",
+   "caption": "Портрет у перил",
+   "width": 1280,
+   "height": 882,
+   "shape": "wide"
+  },
+  {
+   "id": "portret-v-svete",
+   "group": "lyudi",
+   "caption": "Портрет в тёплом свете",
+   "width": 1280,
+   "height": 640,
+   "shape": "wide"
+  },
+  {
+   "id": "otrazhenie-v-stekle-auditorii",
+   "group": "lyudi",
+   "caption": "Отражение в стекле аудитории",
+   "width": 853,
+   "height": 1280,
+   "shape": "tall"
+  },
+  {
+   "id": "lekciya-iz-ryada",
+   "group": "lyudi",
+   "caption": "Лекция из последнего ряда",
+   "width": 960,
+   "height": 1280,
+   "shape": "tall"
+  }
+ ]
+}

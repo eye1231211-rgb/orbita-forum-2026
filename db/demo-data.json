@@ -1,0 +1,676 @@
+{
+  "students": [
+    {
+      "id": "student-alina",
+      "login": "alina",
+      "first_name": "Алина",
+      "last_name": "Луговая",
+      "middle_name": "Мироновна",
+      "institute": "Высшая школа кибертехнологий, математики и статистики",
+      "program": "38.03.05 Бизнес-информатика · Информационная бизнес-аналитика в цифровой среде",
+      "course": 2,
+      "group_name": "15.27Д-БИ01/25б",
+      "semester": 3
+    },
+    {
+      "id": "student-mark",
+      "login": "mark",
+      "first_name": "Марк",
+      "last_name": "Ветров",
+      "middle_name": "Артёмович",
+      "institute": "Высшая школа финансов",
+      "program": "38.03.01 Экономика · Финансы и кредит",
+      "course": 3,
+      "group_name": "15.25Д-ЭФК01/24б",
+      "semester": 5
+    }
+  ],
+  "credentials": [
+    {
+      "student_id": "student-alina",
+      "password_hash": "pbkdf2$100000$cede33c6194fca5e38d21f863c879e22$9d5a43e167ac7b921cf542a24f17acf07693e1bc17e927e2207a480bfb4d660d"
+    },
+    {
+      "student_id": "student-mark",
+      "password_hash": "pbkdf2$100000$7a974ca6f8b3f40eae91b8c83b9b1867$c1ec9af19f22414a627a96168073e98fd24142c8e9bbd5e46025896c16af1401"
+    }
+  ],
+  "requests": [
+    {
+      "id": "demo-request-alina",
+      "student_id": "student-alina",
+      "type": "Справка с места учёбы",
+      "message": "Нужна справка об обучении для участия в учебном проекте.",
+      "status": "В работе",
+      "created_at": "2026-11-06T09:00:00.000Z",
+      "idempotency_key": "demo-request-alina"
+    },
+    {
+      "id": "demo-request-mark",
+      "student_id": "student-mark",
+      "type": "Справка с места учёбы",
+      "message": "Нужна справка об обучении для участия в учебном проекте.",
+      "status": "Готова",
+      "created_at": "2026-11-06T09:00:00.000Z",
+      "idempotency_key": "demo-request-mark"
+    }
+  ],
+  "request_history": [
+    {
+      "id": "demo-request-alina-history-0",
+      "request_id": "demo-request-alina",
+      "student_id": "student-alina",
+      "status": "Принята",
+      "at": "2026-11-06T09:00:00.000Z",
+      "note": "Обращение зарегистрировано в личном кабинете."
+    },
+    {
+      "id": "demo-request-alina-history-1",
+      "request_id": "demo-request-alina",
+      "student_id": "student-alina",
+      "status": "В работе",
+      "at": "2026-11-07T09:00:00.000Z",
+      "note": "Добавлена отметка о начале работы."
+    },
+    {
+      "id": "demo-request-mark-history-0",
+      "request_id": "demo-request-mark",
+      "student_id": "student-mark",
+      "status": "Принята",
+      "at": "2026-11-06T09:00:00.000Z",
+      "note": "Обращение зарегистрировано в личном кабинете."
+    },
+    {
+      "id": "demo-request-mark-history-1",
+      "request_id": "demo-request-mark",
+      "student_id": "student-mark",
+      "status": "В работе",
+      "at": "2026-11-07T09:00:00.000Z",
+      "note": "Добавлена отметка о начале работы."
+    },
+    {
+      "id": "demo-request-mark-history-2",
+      "request_id": "demo-request-mark",
+      "student_id": "student-mark",
+      "status": "Готова",
+      "at": "2026-11-08T09:00:00.000Z",
+      "note": "В журнале установлен статус «Готова»."
+    }
+  ],
+  "disciplines": [
+    {
+      "id": "alina-subject-0",
+      "student_id": "student-alina",
+      "name": "Архитектура предприятия",
+      "credits": 4
+    },
+    {
+      "id": "alina-subject-1",
+      "student_id": "student-alina",
+      "name": "Моделирование бизнес-процессов",
+      "credits": 4
+    },
+    {
+      "id": "alina-subject-2",
+      "student_id": "student-alina",
+      "name": "Анализ данных",
+      "credits": 4
+    },
+    {
+      "id": "alina-subject-3",
+      "student_id": "student-alina",
+      "name": "Проектирование информационных систем",
+      "credits": 3
+    },
+    {
+      "id": "alina-subject-4",
+      "student_id": "student-alina",
+      "name": "Базы данных",
+      "credits": 3
+    },
+    {
+      "id": "alina-subject-5",
+      "student_id": "student-alina",
+      "name": "Проектный практикум",
+      "credits": 3
+    },
+    {
+      "id": "mark-subject-0",
+      "student_id": "student-mark",
+      "name": "Финансы",
+      "credits": 4
+    },
+    {
+      "id": "mark-subject-1",
+      "student_id": "student-mark",
+      "name": "Бухгалтерский учёт",
+      "credits": 4
+    },
+    {
+      "id": "mark-subject-2",
+      "student_id": "student-mark",
+      "name": "Финансовый анализ",
+      "credits": 4
+    },
+    {
+      "id": "mark-subject-3",
+      "student_id": "student-mark",
+      "name": "Корпоративные финансы",
+      "credits": 3
+    },
+    {
+      "id": "mark-subject-4",
+      "student_id": "student-mark",
+      "name": "Деньги, кредит, банки",
+      "credits": 3
+    },
+    {
+      "id": "mark-subject-5",
+      "student_id": "student-mark",
+      "name": "Инвестиционный практикум",
+      "credits": 3
+    }
+  ],
+  "lessons": [
+    {
+      "id": "alina-lesson-0",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-0",
+      "date": "2026-11-09",
+      "start": "09:00",
+      "end": "10:30",
+      "room": "А-304",
+      "teacher": "Мира Ладнева",
+      "kind": "Лекция",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "alina-lesson-1",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-1",
+      "date": "2026-11-09",
+      "start": "10:50",
+      "end": "12:20",
+      "room": "Б-208",
+      "teacher": "Тимур Светлов",
+      "kind": "Практика",
+      "status": "Перенесено",
+      "old_room": "А-201",
+      "note": "Вымышленный перенос: занятие пройдёт в Б-208 вместо А-201. Время прежнее."
+    },
+    {
+      "id": "alina-lesson-2",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-3",
+      "date": "2026-11-09",
+      "start": "13:00",
+      "end": "14:30",
+      "room": "А-112",
+      "teacher": "Лев Туманов",
+      "kind": "Практика",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "alina-lesson-3",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-2",
+      "date": "2026-11-10",
+      "start": "09:00",
+      "end": "10:30",
+      "room": "А-210",
+      "teacher": "Ольга Речная",
+      "kind": "Семинар",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "alina-lesson-4",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-4",
+      "date": "2026-11-10",
+      "start": "10:50",
+      "end": "12:20",
+      "room": "Б-305",
+      "teacher": "Ника Соснова",
+      "kind": "Лекция",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "alina-lesson-5",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-1",
+      "date": "2026-11-11",
+      "start": "10:50",
+      "end": "12:20",
+      "room": "Б-208",
+      "teacher": "Тимур Светлов",
+      "kind": "Практика",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "alina-lesson-6",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-5",
+      "date": "2026-11-11",
+      "start": "13:00",
+      "end": "14:30",
+      "room": "А-112",
+      "teacher": "Ян Полянский",
+      "kind": "Мастерская",
+      "status": "Отменено",
+      "old_room": null,
+      "note": "Вымышленная отмена: преподаватель участвует в учебном семинаре. Замена не назначена."
+    },
+    {
+      "id": "alina-lesson-7",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-3",
+      "date": "2026-11-12",
+      "start": "10:50",
+      "end": "12:20",
+      "room": "А-112",
+      "teacher": "Лев Туманов",
+      "kind": "Защита",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "alina-lesson-8",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-0",
+      "date": "2026-11-12",
+      "start": "13:00",
+      "end": "14:30",
+      "room": "А-304",
+      "teacher": "Мира Ладнева",
+      "kind": "Семинар",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "alina-lesson-9",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-4",
+      "date": "2026-11-13",
+      "start": "09:00",
+      "end": "10:30",
+      "room": "Б-305",
+      "teacher": "Ника Соснова",
+      "kind": "Практика",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "alina-lesson-10",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-2",
+      "date": "2026-11-13",
+      "start": "10:50",
+      "end": "12:20",
+      "room": "А-210",
+      "teacher": "Ольга Речная",
+      "kind": "Семинар",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "mark-lesson-0",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-2",
+      "date": "2026-11-09",
+      "start": "10:50",
+      "end": "12:20",
+      "room": "В-102",
+      "teacher": "Ева Лесная",
+      "kind": "Практика",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "mark-lesson-1",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-0",
+      "date": "2026-11-09",
+      "start": "13:00",
+      "end": "14:30",
+      "room": "В-305",
+      "teacher": "Вера Озёрная",
+      "kind": "Лекция",
+      "status": "Перенесено",
+      "old_room": "Г-114",
+      "note": "Вымышленный перенос: занятие пройдёт в В-305 вместо Г-114. Время прежнее."
+    },
+    {
+      "id": "mark-lesson-2",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-1",
+      "date": "2026-11-10",
+      "start": "09:00",
+      "end": "10:30",
+      "room": "Г-210",
+      "teacher": "Арсен Мирный",
+      "kind": "Лекция",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "mark-lesson-3",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-3",
+      "date": "2026-11-10",
+      "start": "10:50",
+      "end": "12:20",
+      "room": "В-102",
+      "teacher": "Дамир Северный",
+      "kind": "Практика",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "mark-lesson-4",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-5",
+      "date": "2026-11-11",
+      "start": "09:00",
+      "end": "10:30",
+      "room": "Г-115",
+      "teacher": "Глеб Холмов",
+      "kind": "Лабораторная",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "mark-lesson-5",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-4",
+      "date": "2026-11-11",
+      "start": "13:00",
+      "end": "14:30",
+      "room": "В-305",
+      "teacher": "Лада Вишнёва",
+      "kind": "Семинар",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    },
+    {
+      "id": "mark-lesson-6",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-3",
+      "date": "2026-11-12",
+      "start": "10:50",
+      "end": "12:20",
+      "room": "В-102",
+      "teacher": "Дамир Северный",
+      "kind": "Защита",
+      "status": "Отменено",
+      "old_room": null,
+      "note": "Вымышленная отмена: преподаватель участвует в учебном семинаре. Замена не назначена."
+    },
+    {
+      "id": "mark-lesson-7",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-0",
+      "date": "2026-11-13",
+      "start": "09:00",
+      "end": "10:30",
+      "room": "В-305",
+      "teacher": "Вера Озёрная",
+      "kind": "Семинар",
+      "status": "Обычное",
+      "old_room": null,
+      "note": ""
+    }
+  ],
+  "results": [
+    {
+      "id": "alina-result-0",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-0",
+      "result": "5",
+      "status": "Есть оценки",
+      "updated_at": "2026-11-05",
+      "next_date": null,
+      "next_kind": null
+    },
+    {
+      "id": "alina-result-1",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-1",
+      "result": "4",
+      "status": "Есть оценки",
+      "updated_at": "2026-11-05",
+      "next_date": null,
+      "next_kind": null
+    },
+    {
+      "id": "alina-result-2",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-2",
+      "result": "Зачёт",
+      "status": "Зачтено",
+      "updated_at": "2026-11-05",
+      "next_date": null,
+      "next_kind": null
+    },
+    {
+      "id": "alina-result-3",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-3",
+      "result": null,
+      "status": "Ожидает результата",
+      "updated_at": null,
+      "next_date": "2026-11-12",
+      "next_kind": "Защита прототипа"
+    },
+    {
+      "id": "alina-result-4",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-4",
+      "result": null,
+      "status": "Ожидает результата",
+      "updated_at": null,
+      "next_date": "2026-11-17",
+      "next_kind": "Зачёт"
+    },
+    {
+      "id": "alina-result-5",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-5",
+      "result": null,
+      "status": "Ожидает результата",
+      "updated_at": null,
+      "next_date": null,
+      "next_kind": null
+    },
+    {
+      "id": "mark-result-0",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-0",
+      "result": "5",
+      "status": "Есть оценки",
+      "updated_at": "2026-11-05",
+      "next_date": null,
+      "next_kind": null
+    },
+    {
+      "id": "mark-result-1",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-1",
+      "result": "5",
+      "status": "Есть оценки",
+      "updated_at": "2026-11-05",
+      "next_date": null,
+      "next_kind": null
+    },
+    {
+      "id": "mark-result-2",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-2",
+      "result": "Зачёт",
+      "status": "Зачтено",
+      "updated_at": "2026-11-05",
+      "next_date": null,
+      "next_kind": null
+    },
+    {
+      "id": "mark-result-3",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-3",
+      "result": null,
+      "status": "Ожидает результата",
+      "updated_at": null,
+      "next_date": "2026-11-12",
+      "next_kind": "Защита прототипа"
+    },
+    {
+      "id": "mark-result-4",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-4",
+      "result": null,
+      "status": "Ожидает результата",
+      "updated_at": null,
+      "next_date": "2026-11-17",
+      "next_kind": "Зачёт"
+    },
+    {
+      "id": "mark-result-5",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-5",
+      "result": null,
+      "status": "Ожидает результата",
+      "updated_at": null,
+      "next_date": null,
+      "next_kind": null
+    }
+  ],
+  "notifications": [
+    {
+      "id": "alina-notice-room-change",
+      "student_id": "student-alina",
+      "title": "Перенос аудитории",
+      "text": "Философия, 23 ноября: в корпусе 3 аудитория 527 вместо 525. Учебный пример.",
+      "category": "Расписание",
+      "date": "2026-11-21T08:00:00.000Z",
+      "href": "/schedule?date=2026-11-23#lesson-reu-ff7b3b1d916673caaba2ae05"
+    },
+    {
+      "id": "mark-notice-room-change",
+      "student_id": "student-mark",
+      "title": "Перенос аудитории",
+      "text": "Основы финансовых вычислений, 23 ноября: в корпусе 2 аудитория 131 вместо 129. Учебный пример.",
+      "category": "Расписание",
+      "date": "2026-11-21T08:00:00.000Z",
+      "href": "/schedule?date=2026-11-23#lesson-reu-f1dc93e46ad572fde60f4e2c"
+    },
+    {
+      "id": "alina-notice-0",
+      "student_id": "student-alina",
+      "title": "Расписание вашей группы",
+      "text": "Откройте пары на неделю. В расписании указаны время, аудитория и подгруппа.",
+      "category": "Расписание",
+      "date": "2026-11-09T05:30:00.000Z",
+      "href": "/schedule?view=week"
+    },
+    {
+      "id": "alina-notice-1",
+      "student_id": "student-alina",
+      "title": "Скоро защита информационной системы",
+      "text": "12 ноября 2026 в 10:50 — защита учебного проекта. Посмотрите детали в разделе успеваемости.",
+      "category": "Учёба",
+      "date": "2026-11-08T10:00:00.000Z",
+      "href": "/grades"
+    },
+    {
+      "id": "alina-notice-2",
+      "student_id": "student-alina",
+      "title": "Статус справки обновлён",
+      "text": "Посмотрите изменения в истории вашего обращения.",
+      "category": "Заявки",
+      "date": "2026-11-08T09:00:00.000Z",
+      "href": "/requests/demo-request-alina"
+    },
+    {
+      "id": "alina-notice-3",
+      "student_id": "student-alina",
+      "title": "Объявления университета",
+      "text": "В подборке доступны события и конкурсы РЭУ.",
+      "category": "Новости",
+      "date": "2026-11-07T08:00:00.000Z",
+      "href": "/notifications?tab=university"
+    },
+    {
+      "id": "mark-notice-0",
+      "student_id": "student-mark",
+      "title": "Расписание вашей группы",
+      "text": "Откройте пары на неделю. В расписании указаны время, аудитория и подгруппа.",
+      "category": "Расписание",
+      "date": "2026-11-09T05:30:00.000Z",
+      "href": "/schedule?view=week"
+    },
+    {
+      "id": "mark-notice-1",
+      "student_id": "student-mark",
+      "title": "Скоро защита финансовой модели",
+      "text": "12 ноября 2026 в 10:50 — защита учебного проекта. Посмотрите детали в разделе успеваемости.",
+      "category": "Учёба",
+      "date": "2026-11-08T10:00:00.000Z",
+      "href": "/grades"
+    },
+    {
+      "id": "mark-notice-2",
+      "student_id": "student-mark",
+      "title": "Статус справки обновлён",
+      "text": "Посмотрите изменения в истории вашего обращения.",
+      "category": "Заявки",
+      "date": "2026-11-08T09:00:00.000Z",
+      "href": "/requests/demo-request-mark"
+    },
+    {
+      "id": "mark-notice-3",
+      "student_id": "student-mark",
+      "title": "Объявления университета",
+      "text": "В подборке доступны события и конкурсы РЭУ.",
+      "category": "Новости",
+      "date": "2026-11-07T08:00:00.000Z",
+      "href": "/notifications?tab=university"
+    }
+  ],
+  "events": [
+    {
+      "id": "alina-event-0",
+      "student_id": "student-alina",
+      "discipline_id": "alina-subject-3",
+      "title": "Защита проекта информационной системы",
+      "date": "2026-11-12",
+      "time": "10:50",
+      "note": "Подготовьте материалы проекта к защите."
+    },
+    {
+      "id": "mark-event-0",
+      "student_id": "student-mark",
+      "discipline_id": "mark-subject-3",
+      "title": "Защита финансовой модели",
+      "date": "2026-11-12",
+      "time": "10:50",
+      "note": "Подготовьте материалы проекта к защите."
+    }
+  ]
+}

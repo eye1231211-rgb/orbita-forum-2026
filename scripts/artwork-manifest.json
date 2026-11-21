@@ -1,0 +1,105 @@
+{
+  "created": "2026-11-10",
+  "updated": "2026-11-14",
+  "generator": "Built-in image_gen",
+  "purpose": "Честный журнал сгенерированных изображений. Записи сохраняются как история, даже если файл больше не входит в продукт: конкурсная работа обязана показывать, что именно было сгенерировано.",
+  "current_state": "В интерфейсе не осталось ни одного сгенерированного изображения. Фирменный знак «Орбиты» нарисован вектором в app/components/Brand.tsx, вместо портретов студентов показываются типографские монограммы, фон рабочей области собран из CSS-градиентов и зерна в app/system.css. Единственные растровые изображения продукта — настоящие фотографии: 12 авторских снимков plekh-*.webp и три архивных снимка по лицензии CC BY-SA, перечисленные в scripts/reu-photo-sources.json.",
+  "status_values": {
+    "removed": "Файл удалён из репозитория и из интерфейса.",
+    "unused": "Файл ещё лежит в public/images, но ни один шаблон на него не ссылается.",
+    "in_use": "Файл используется интерфейсом."
+  },
+  "assets": [
+    {
+      "file": "public/images/campus.webp",
+      "status": "removed",
+      "replaced_by": "Настоящие фотографии кампуса в app/components/CampusGallery.tsx",
+      "source": "exec-e4bf49c1-dd86-4077-a6aa-601709be4a2f.png",
+      "prompt": "Use case: stylized-concept. Asset type: hero art for a sophisticated Russian university student portal called Orbita. Create an architectural miniature still life, a meticulously constructed scale model of a contemporary university library: cream limestone monolithic stair terraces, a single rounded arch with translucent amber glass insert, one horizontal midnight-blue book-shaped volume, one small brushed aluminum sphere subtly tucked into an alcove. Art direction: collectible architectural object photographed in a premium design journal, physically believable miniature, crisp edge geometry, tactile limestone and milled aluminum, soft natural studio light from upper left. Warm ivory seamless background #f1eee7 with long subtle contact shadows, restrained electric cobalt detail, no green, no purple. Large model fills middle of a landscape 3:2 composition; plenty of clean ivory around it. Entire object visible. No text, no numbers, no UI, no logos, no watermark, no people, no floating objects, no generic cartoon graduation caps. This is an original generated asset, not a copy of an existing design.",
+      "note": "Imaginary architectural illustration, not a depiction of an actual REU building."
+    },
+    {
+      "file": "public/images/documents.webp",
+      "status": "removed",
+      "replaced_by": "Иконки Lucide в плашках быстрых действий раздела «Заявки»",
+      "source": "exec-7692e62c-58ba-4cfb-b7e4-91ffd8b52a78.png",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup. Asset type: transparent decorative 3D asset for a student portal documents section. A premium sculptural still life of a thin deep cobalt-blue document folder, slightly open with three thick ivory paper sheets, one brushed aluminum paperclip. Folder is standing at a 25 degree angle, three-quarter view, entire object centered and fully visible with generous space, precise industrial design, matte coated paper texture, fine realistic edges, tasteful soft studio lighting from top left. The folder and sheets are blank: no writing, no lines, no icons, no symbols, no logos, no UI, no watermark. Limited palette cobalt, off-white, aluminum. Photorealistic 3D product render, not cartoon. Transparent background, real alpha cutout."
+    },
+    {
+      "file": "public/images/calendar.webp",
+      "status": "removed",
+      "replaced_by": "Лента учебного дня и полоса недели — собственные элементы интерфейса",
+      "source": "exec-a77de376-edda-4d96-afc8-2dba12b9a039.png",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup. Asset type: transparent decorative 3D asset for a student portal schedule section. A small refined physical desk planner, ivory pages supported by a brushed aluminum A-frame stand, two slender chrome binding rings and a cobalt blue page marker. Blank planner page subtly embossed with a 4 by 3 grid of square recesses, one recess filled amber glass. No letters, no dates, no numbers. Three-quarter view, entire object fully visible, composition centered with generous space, precise realistic manufacture, soft studio key light top left, exquisite material details. Limited palette ivory, polished chrome, electric cobalt, tiny amber. Premium editorial object photography / 3D render, not cartoon, no UI, no watermark. Transparent background, real alpha cutout."
+    },
+    {
+      "file": "public/images/books.webp",
+      "status": "removed",
+      "replaced_by": "Ведомость с набирающимися шкалами баллов в app/components/Gradebook.tsx",
+      "source": "exec-fff146b3-b5ba-4b32-8f06-3d36e6d4cc25.png",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup. Asset type: transparent decorative 3D asset for a student portal academic results section. An art-directed still life of three beautiful hardcover notebooks stacked at slightly different angles: bottom book deep cobalt-blue linen, middle warm ivory cloth, top a thin black charcoal notebook open slightly. One amber translucent rectangular glass bookmark resting diagonally across the top. Entire composition visible centered with generous space, three-quarter camera from slightly above, tactile paper edges, physically correct geometry, premium product photography 3D render with soft studio lighting top left. No titles, lettering, numbers, logos, symbols, UI, watermark, no cartoon graduation cap. Transparent background, real alpha cutout."
+    },
+    {
+      "file": "public/images/stremyanny-print.webp",
+      "status": "removed",
+      "replaced_by": "Фотографии Стремянного переулка в галерее кампуса",
+      "generator": "Built-in ImageGen",
+      "created": "2026-11-11",
+      "prompt": "Панорамный воображаемый архитектурный портрет экономического университета в Стремянном переулке: длинный исторический фасад с фронтоном в центре и справа, студенты для масштаба. Двухцветная офсетная печать индиго на кремовой бумаге, плотная штриховка, без букв, интерфейсов, логотипов и градиентов."
+    },
+    {
+      "file": "public/images/campus-light.webp",
+      "status": "removed",
+      "replaced_by": "Фон рабочей области из CSS-градиентов (app/system.css, раздел 2)",
+      "created": "2026-11-11",
+      "generator": "Built-in ImageGen",
+      "prompt": "Imagined Moscow university courtyard, architectural editorial photograph on large-format film. Low-angle pale limestone ribs on the left, dark teal metal and glass on the right, warm sunlight in the courtyard at the right third, tiny students, no signage, lettering or UI. Wide 2:1 composition."
+    },
+    {
+      "file": "public/images/avatar-mark.webp",
+      "status": "unused",
+      "removed_from_ui": "2026-11-14",
+      "replaced_by": "Монограмма инициалов (Monogram в app/components/Brand.tsx)",
+      "created": "2026-11-13",
+      "generator": "Built-in ImageGen",
+      "prompt": "Fictional university student Mark, short dark hair, navy overshirt, natural daylight portrait on a neutral light blue background.",
+      "note": "Портрет несуществующего человека рядом с учебной записью читался как настоящая фотография студента. Из интерфейса убран."
+    },
+    {
+      "file": "public/images/avatar-alina.webp",
+      "status": "unused",
+      "removed_from_ui": "2026-11-14",
+      "replaced_by": "Монограмма инициалов (Monogram в app/components/Brand.tsx)",
+      "created": "2026-11-13",
+      "generator": "Built-in ImageGen",
+      "prompt": "Fictional university student Alina, shoulder-length dark blond hair, light blue shirt, natural daylight portrait on a neutral light blue background.",
+      "note": "Портрет несуществующего человека рядом с учебной записью читался как настоящая фотография студента. Из интерфейса убран."
+    },
+    {
+      "file": "public/images/avatar-orbita.webp",
+      "status": "unused",
+      "removed_from_ui": "2026-11-14",
+      "replaced_by": "Векторный знак OrbitMark в app/components/Brand.tsx",
+      "created": "2026-11-13",
+      "generator": "Built-in ImageGen",
+      "prompt": "Macro photograph of a navy enamel pin with a silver Ionic capital, no lettering.",
+      "note": "Глянцевый объёмный медальон выбивался из плоской университетской графики. Заменён рисованным знаком."
+    },
+    {
+      "file": "(не входит в поставку) эскиз знака «портик на орбите»",
+      "status": "removed",
+      "created": "2026-11-14",
+      "generator": "сгенерирован заказчиком во внешнем генераторе изображений",
+      "replaced_by": "Не используется: заказчик оставил прежний векторный знак «ядро и орбита» (OrbitMark в app/components/Brand.tsx)",
+      "note": "Растровый эскиз перерисовывался вектором 2026-11-14 и был отклонён заказчиком; в поставку не входит ни эскиз, ни его векторная копия."
+    }
+  ],
+  "visual_references": [
+    "https://www.scrolltide.co/ui#u-property-portfolio",
+    "https://www.scrolltide.co/ui#u-workspace-hub"
+  ],
+  "notes": "Public previews studied. No paid Scrolltide prompts, code, images or templates downloaded. WebP delivery variants preserve composition and alpha."
+}

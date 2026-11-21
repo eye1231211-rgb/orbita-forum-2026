@@ -1,0 +1,23 @@
+-- Adapt only known demonstration fixtures to REU. Preserve sessions, passwords, requests, history, read states and plan marks.
+UPDATE students SET institute = 'Высшая школа кибертехнологий, математики и статистики', program = '38.03.05 Бизнес-информатика · Информационная бизнес-аналитика в цифровой среде', group_name = 'ДЕМО-БИ-25' WHERE id = 'student-alina';
+UPDATE students SET institute = 'Высшая школа финансов', program = '38.03.01 Экономика · Финансы и кредит', group_name = 'ДЕМО-ФК-24' WHERE id = 'student-mark';
+UPDATE disciplines SET name = 'Архитектура предприятия' WHERE id = 'alina-subject-0';
+UPDATE disciplines SET name = 'Моделирование бизнес-процессов' WHERE id = 'alina-subject-1';
+UPDATE disciplines SET name = 'Анализ данных' WHERE id = 'alina-subject-2';
+UPDATE disciplines SET name = 'Проектирование информационных систем' WHERE id = 'alina-subject-3';
+UPDATE disciplines SET name = 'Базы данных' WHERE id = 'alina-subject-4';
+UPDATE disciplines SET name = 'Проектный практикум' WHERE id = 'alina-subject-5';
+UPDATE disciplines SET name = 'Финансы' WHERE id = 'mark-subject-0';
+UPDATE disciplines SET name = 'Бухгалтерский учёт' WHERE id = 'mark-subject-1';
+UPDATE disciplines SET name = 'Финансовый анализ' WHERE id = 'mark-subject-2';
+UPDATE disciplines SET name = 'Корпоративные финансы' WHERE id = 'mark-subject-3';
+UPDATE disciplines SET name = 'Деньги, кредит, банки' WHERE id = 'mark-subject-4';
+UPDATE disciplines SET name = 'Инвестиционный практикум' WHERE id = 'mark-subject-5';
+UPDATE events SET title = 'Защита проекта информационной системы' WHERE id = 'alina-event-0';
+UPDATE events SET title = 'Защита финансовой модели' WHERE id = 'mark-event-0';
+UPDATE notifications SET text = 'Моделирование бизнес-процессов: 2026-11-09 в 10:50, аудитория Б-208 вместо А-201. Это вымышленный пример переноса.' WHERE id = 'alina-notice-0';
+UPDATE notifications SET title = 'Скоро защита информационной системы' WHERE id = 'alina-notice-1';
+UPDATE notifications SET title = 'Практикум по бизнес-аналитике', text = '13 ноября 2026 в 16:00 — вымышленная встреча о бизнес-аналитике в пространстве А-112.' WHERE id = 'alina-notice-3';
+UPDATE notifications SET text = 'Финансы: 2026-11-09 в 13:00, аудитория В-305 вместо Г-114. Это вымышленный пример переноса.' WHERE id = 'mark-notice-0';
+UPDATE notifications SET title = 'Скоро защита финансовой модели' WHERE id = 'mark-notice-1';
+UPDATE notifications SET title = 'Практикум по финансовым моделям', text = '13 ноября 2026 в 15:00 — вымышленное обсуждение финансовых моделей в Г-115.' WHERE id = 'mark-notice-3';

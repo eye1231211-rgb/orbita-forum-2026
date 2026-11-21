@@ -1,0 +1,27 @@
+{
+ "checkedAt": "2026-11-15",
+ "source": "https://rea.ru/",
+ "items": [
+  {
+   "when": "До 23 ноября 2026",
+   "kind": "Приём заявок",
+   "title": "Конкурс «Шаг в науку»",
+   "body": "Студенты и аспиранты РЭУ могут представить исследовательскую работу. Условия и форма подачи опубликованы университетом 9 ноября.",
+   "href": "https://rea.ru/news/89316-v-plehanovskom-universitete-startoval-konkurs-na-vyipolnenie-nauchno-issledovatelskih-rabot-studentami-i-aspirantami-shag-v-nauku--2026"
+  },
+  {
+   "when": "25–26 ноября 2026",
+   "kind": "Событие",
+   "title": "Цифровые технологии в медицине",
+   "body": "Школа молодых учёных пройдёт в корпусе 1 в Стремянном переулке. На странице события доступны программа и регистрация.",
+   "href": "https://rea.ru/events/89255-iv-shkola-molodyih-uchenyih-primenenie-tsifrovyih-tehnologiy-v-meditsine"
+  },
+  {
+   "when": "3 ноября 2026",
+   "kind": "Архив",
+   "title": "День донора в Плехановке",
+   "body": "В программе акции в девятом корпусе были донация и площадки студенческих объединений.",
+   "href": "https://rea.ru/events/77380-den-donora-reu-120-let-dobryih-del"
+  }
+ ]
+}

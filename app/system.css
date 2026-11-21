@@ -1,0 +1,1972 @@
+/* ============================================================
+   Орбита · системный слой
+   Подключается последним и задаёт единые правила для
+   типографики, глубины, движения и фирменных элементов.
+   Палитра университета сохранена без изменений.
+   ============================================================ */
+
+:root {
+  /* --- Палитра РЭУ (не меняется) --- */
+  --navy: #102847;
+  --university-blue: #0d3c78;
+  --ice: #caddff;
+  --page: #f4f6fa;
+  --surface: #ffffff;
+  --ink: #14233c;
+  --muted: #53627a;
+  --line: #d8e0ea;
+  --accent: #144e98;
+  --accent-hover: #0e3973;
+  --accent-soft: #e3ecf9;
+
+  /* --- Производные тона: строятся из палитры, не вводят новых цветов --- */
+  --navy-deep: #0a1c33;
+  --navy-soft: #1c3350;
+  --ink-soft: #35486a;
+  --muted-light: #7a88a0;
+  --line-soft: #e6ecf3;
+  --line-strong: #c3d0e0;
+  --wash: #f0f4fa;
+  --wash-blue: #e9f0fa;
+
+  /* --- Шкала пространства: шаг 4px --- */
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px;
+  --s9: 56px; --s10: 72px;
+
+  /* --- Радиусы --- */
+  --r-xs: 6px; --r-sm: 9px; --r-md: 12px;
+  --r-lg: 16px; --r-xl: 22px; --r-pill: 999px;
+
+  /* --- Глубина: тени мягкие и сине-тонированные, без серого --- */
+  --shadow-rest: none;
+  --shadow-raised: 0 1px 2px rgba(16, 40, 71, .05), 0 3px 10px -4px rgba(16, 40, 71, .08);
+  --shadow-float: 0 2px 4px rgba(16, 40, 71, .06), 0 12px 28px -10px rgba(16, 40, 71, .16);
+  --shadow-deep: 0 4px 10px rgba(10, 28, 51, .1), 0 24px 56px -18px rgba(10, 28, 51, .28);
+
+  /* --- Движение: один словарь на всё приложение --- */
+  --ease-out: cubic-bezier(.22, .68, .26, 1);
+  --ease-in-out: cubic-bezier(.5, .05, .25, 1);
+  --ease-spring: cubic-bezier(.34, 1.26, .48, 1);
+  --dur-1: 120ms;  /* отклик на наведение */
+  --dur-2: 170ms;  /* смена состояния */
+  --dur-3: 240ms;  /* появление блока */
+  --dur-4: 300ms;  /* смена страницы */
+
+  /* --- Типографика --- */
+  --tracking-display: -.055em;
+  --tracking-tight: -.03em;
+  --tracking-label: .09em;
+  --numeric: "Golos", "Segoe UI", sans-serif;
+}
+
+/* ============================================================
+   1. Типографика: единая шкала с настоящим контрастом
+   ============================================================ */
+
+.app-shell, .login-page { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+
+/* Вывод крупных чисел — всегда моноширинные цифры и плотный трекинг */
+.atlas-readout > b, .semester-count strong, .sheet-total strong, .identity-body dd, .atlas-row time, .record-mark, .ticket-date, .week-strip button strong {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* Надзаголовки: мелкие, разрядка, верхний регистр — опора всей сетки */
+.eyebrow, .atlas-dial-head, .sheet-top, .requests-count {
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.studio-title h1, .edition-title h1 { letter-spacing: var(--tracking-display); }
+.studio-title p, .edition-title .title-copy p { max-width: 62ch; }
+
+/* ============================================================
+   2. Живой фон «созвездие частиц»
+   Выбран заказчиком из четырёх живых вариантов, показанных вживую
+   (образец — Magic UI «Particles»). Точки дрейфуют, соединяются
+   линиями и разбегаются от курсора; рисуются на холсте в
+   app/components/ambient.tsx. Под холстом — неподвижный мягкий свет
+   палитры: он же служит фоном, если скрипт не запустился.
+   ============================================================ */
+
+.workspace {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+.login-page { background: transparent; }
+
+/* Цвет страницы держит html, body прозрачен: сплошной фон body рисуется
+   поверх слоя с z-index −1 и полностью закрыл бы живой фон. */
+body { background: transparent; }
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  /* Запасной вид, если WebGL недоступен: тот же характер, но неподвижно */
+  background:
+    radial-gradient(70% 60% at 85% 0%, rgba(202, 221, 255, .95), transparent 70%),
+    radial-gradient(60% 55% at 0% 60%, rgba(158, 192, 240, .55), transparent 70%),
+    var(--page);
+}
+.ambient canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity .9s var(--ease-out);
+}
+.ambient canvas.is-ready { opacity: 1; }
+
+@media print { .ambient { display: none; } }
+
+/* ============================================================
+   3. Глубина и поверхности
+   ============================================================ */
+
+.card, .record-list, .record-inspector, .record-mobile, .atlas-itinerary, .atlas-index, .atlas-lower .week-plan, .reu-directory, .reu-catalogue, .reu-guide, .reu-news, .reu-contacts, .identity-card, .empty, .form-aside {
+  box-shadow: var(--shadow-raised);
+  border-color: var(--line-soft);
+}
+
+.atlas-spread, .semester-hero, .assessment-ticket { box-shadow: var(--shadow-float); }
+
+.week-strip { box-shadow: var(--shadow-raised); border-color: var(--line-soft); }
+
+.toast { box-shadow: var(--shadow-deep); }
+
+/* ============================================================
+   4. Движение: единая хореография
+   ============================================================ */
+
+/* Смена страницы: содержимое собирается сверху вниз с лёгким сдвигом */
+.route-surface {
+  animation: surface-in var(--dur-4) var(--ease-out) both;
+}
+@keyframes surface-in {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Каскад: первые блоки страницы появляются по очереди */
+.route-surface > * { animation: block-in var(--dur-3) var(--ease-out) both; }
+.route-surface > *:nth-child(1) { animation-delay: 20ms; }
+.route-surface > *:nth-child(2) { animation-delay: 70ms; }
+.route-surface > *:nth-child(3) { animation-delay: 115ms; }
+.route-surface > *:nth-child(4) { animation-delay: 155ms; }
+.route-surface > *:nth-child(n+5) { animation-delay: 190ms; }
+@keyframes block-in {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Строки списков проявляются каскадом внутри своего блока */
+.atlas-itinerary .atlas-row, .requests-list .request-card, .notification-list .notification-card, .record-list .record-item {
+  animation: row-in var(--dur-3) var(--ease-out) both;
+}
+.atlas-row:nth-child(2), .request-card:nth-child(2), .notification-card:nth-child(2) { animation-delay: 40ms; }
+.atlas-row:nth-child(3), .request-card:nth-child(3), .notification-card:nth-child(3) { animation-delay: 80ms; }
+.atlas-row:nth-child(4), .request-card:nth-child(4), .notification-card:nth-child(4) { animation-delay: 115ms; }
+.atlas-row:nth-child(5), .request-card:nth-child(5), .notification-card:nth-child(5) { animation-delay: 145ms; }
+.atlas-row:nth-child(n+6), .request-card:nth-child(n+6), .notification-card:nth-child(n+6) { animation-delay: 170ms; }
+@keyframes row-in {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Единые переходы состояний */
+.button, .desktop-nav a, .mobile-nav a, .record-pick, .icon-button, .atlas-row, .request-card, .index-line, .demo-account, .service-choices a, .reu-tabs a, .reu-tabs button, .segmented > button, .text-link, .text-button {
+  transition:
+    background-color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out);
+}
+
+/* Нажатие даёт физический отклик; сами ховеры собраны в разделе 25 */
+.button:active, .demo-account:active, .service-choices a:active { transform: translateY(1px); }
+.button.primary { box-shadow: 0 1px 2px rgba(13, 60, 120, .22); }
+.index-line { padding-inline: var(--s2); margin-inline: calc(var(--s2) * -1); border-radius: var(--r-sm); }
+.desktop-nav a[aria-current="page"] { box-shadow: 0 2px 10px -3px rgba(202, 221, 255, .5); }
+
+/* ============================================================
+   5. Фокус: заметный, но аккуратный
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+.app-header :focus-visible { outline-color: var(--ice); }
+.login-story :focus-visible, .atlas-dial :focus-visible { outline-color: var(--ice); }
+
+/* ============================================================
+   6. Фирменный знак и монограммы вместо сгенерированных лиц
+   ============================================================ */
+
+.orbit-mark { display: block; flex: none; color: var(--ice); }
+.app-header .orbit-brand .orbit-mark { width: 38px; height: 38px; }
+.login-mobile-brand .orbit-mark, .login-story .orbit-mark { width: 40px; height: 40px; }
+
+/* Монограмма: инициалы вместо портрета */
+.monogram {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--university-blue);
+  font-weight: 650;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  user-select: none;
+  box-shadow: inset 0 0 0 1px rgba(13, 60, 120, .16);
+}
+.monogram.on-navy { background: #22395a; color: var(--ice); box-shadow: inset 0 0 0 1px rgba(202, 221, 255, .26); }
+.monogram.size-sm { width: 32px; height: 32px; font-size: 11px; }
+.monogram.size-md { width: 40px; height: 40px; font-size: 13px; }
+.monogram.size-lg { width: 100%; height: 100%; font-size: clamp(34px, 6vw, 64px); border-radius: 0; }
+
+/* Карточка профиля: вместо фотографии — крупная монограмма на фирменном фоне */
+.identity-photo.identity-monogram {
+  background: linear-gradient(145deg, var(--navy), var(--university-blue));
+  display: grid;
+  place-items: center;
+}
+.identity-photo.identity-monogram .monogram {
+  background: transparent;
+  color: var(--ice);
+  box-shadow: none;
+}
+
+/* ============================================================
+   7. Отделка интерфейса
+   ============================================================ */
+
+/* Боковое меню: мягкая граница и выверенный ритм */
+.app-header {
+  background: linear-gradient(180deg, var(--navy), var(--navy-deep));
+  box-shadow: inset -1px 0 0 rgba(202, 221, 255, .1);
+}
+
+/* Разделы меню «Университет» */
+.campus-nav-group { border-top-color: rgba(202, 221, 255, .16); }
+.header-account { border-top-color: rgba(202, 221, 255, .16); }
+
+/* Счётчик непрочитанных — круглый и контрастный */
+.desktop-nav a > span {
+  min-width: 20px; height: 20px; padding: 0 6px;
+  display: grid; place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--ice); color: var(--navy);
+  font-size: 10px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.desktop-nav a[aria-current="page"] > span { background: var(--navy); color: var(--ice); }
+
+/* Шапка дня: номер пары читается как типографский знак */
+
+/* Ведомость: шкалы баллов плавно набираются */
+.part-track i { transition: width var(--dur-4) var(--ease-out); }
+.semester-meter i { transition: background-color var(--dur-3) var(--ease-out); }
+
+/* Галерея кампуса: фотографии приведены к фирменному тону */
+.gallery-frames img {
+  filter: saturate(.88) contrast(1.04);
+  transition: opacity 850ms var(--ease-in-out), transform 9s linear;
+}
+.gallery-frames img.on-slide { transform: scale(1.03); }
+.still-gallery .gallery-frames img { transform: none; transition: none; }
+
+
+/* Подвал: спокойнее и компактнее */
+.page-footer { border-top-color: var(--line); }
+
+/* ============================================================
+   8. Уважение к настройкам пользователя
+   Ничего не двигается при «Отключить анимацию» и reduced-motion.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .route-surface, .route-surface > *, .atlas-row, .request-card, .notification-card, .record-item {
+    animation: none !important;
+  }
+  .gallery-frames img.on-slide { transform: none; }
+}
+
+/* ============================================================
+   9. Мобильная отделка
+   ============================================================ */
+
+@media (max-width: 820px) {
+  .app-header {
+    background: linear-gradient(90deg, var(--navy), var(--navy-soft));
+    box-shadow: 0 1px 0 rgba(202, 221, 255, .12);
+  }
+  .mobile-nav { box-shadow: 0 -2px 14px rgba(16, 40, 71, .07); }
+  .mobile-nav a.active { box-shadow: inset 0 0 0 1px rgba(13, 60, 120, .12); }
+}
+
+@media (max-width: 650px) {
+  .route-surface > *:nth-child(n+3) { animation-delay: 90ms; }
+}
+
+/* ============================================================
+   10. Плашка ближайшего контроля
+   Декоративные разводы заменены тем же ритмом колоннады,
+   что и фон страницы: один язык на всё приложение.
+   ============================================================ */
+
+.assessment-ticket {
+  background: linear-gradient(135deg, var(--wash-blue), #f4f8ff 58%, var(--accent-soft));
+}
+.assessment-ticket::before {
+  inset: 0;
+  opacity: .55;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(13, 60, 120, .07) 0 1px,
+    transparent 1px 46px
+  );
+  mask-image: linear-gradient(255deg, #000, transparent 72%);
+  -webkit-mask-image: linear-gradient(255deg, #000, transparent 72%);
+}
+
+/* ============================================================
+   12. Шкалы баллов набираются при открытии дисциплины
+   ============================================================ */
+
+.part-track { height: 5px; }
+.part-track i {
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--university-blue), var(--accent));
+  animation: bar-fill 560ms var(--ease-out) both;
+}
+.sheet-parts > div:nth-child(2) .part-track i { animation-delay: 70ms; }
+.sheet-parts > div:nth-child(3) .part-track i { animation-delay: 130ms; }
+.sheet-parts > div:nth-child(4) .part-track i { animation-delay: 185ms; }
+.sheet-parts > div:nth-child(n+5) .part-track i { animation-delay: 230ms; }
+@keyframes bar-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Полоса семестра заполняется по очереди */
+.semester-meter i.filled { animation: meter-in 420ms var(--ease-spring) both; }
+.semester-meter i.filled:nth-child(2) { animation-delay: 55ms; }
+.semester-meter i.filled:nth-child(3) { animation-delay: 105ms; }
+.semester-meter i.filled:nth-child(4) { animation-delay: 150ms; }
+.semester-meter i.filled:nth-child(n+5) { animation-delay: 190ms; }
+@keyframes meter-in { from { transform: scaleY(.3); opacity: .4; } to { transform: none; opacity: 1; } }
+
+/* Крупный балл проявляется чуть позже подписи */
+.sheet-total strong { animation: score-in 420ms var(--ease-spring) both; display: inline-block; }
+@keyframes score-in { from { opacity: 0; transform: translate3d(0, 7px, 0); } to { opacity: 1; transform: none; } }
+
+/* ============================================================
+   13. Иконки: единая оптическая плотность
+   ============================================================ */
+
+.desktop-nav a > svg, .mobile-nav a > svg { stroke-width: 1.75; opacity: .86; }
+.desktop-nav a[aria-current="page"] > svg { opacity: 1; stroke-width: 2; }
+.mobile-nav a.active > svg { opacity: 1; stroke-width: 2; }
+.icon-button > svg, .text-link > svg, .text-button > svg { stroke-width: 1.8; }
+
+@media (prefers-reduced-motion: reduce) {
+  .part-track i, .semester-meter i.filled, .sheet-total strong {
+    animation: none !important;
+  }
+
+}
+
+/* ============================================================
+   14. Галерея на главной: снимок, а не фотоальбом
+   Управление не нужно на виду — главная страница про учебный день.
+   Кадры листаются сами; стрелки появляются, только когда к ним тянутся.
+   ============================================================ */
+
+/* Кадр всегда заполняет рамку: режим scale-down давал поля по краям */
+.gallery-frames img, .atlas-print .gallery-frames img { object-fit: cover; }
+
+
+/* ============================================================
+   15. Экран входа: собственное появление
+   Он вне общего каскада, поэтому получает свою — спокойную — сцену.
+   ============================================================ */
+
+.login-story { animation: gate-in 560ms var(--ease-out) both; }
+@keyframes gate-in { from { opacity: 0; } to { opacity: 1; } }
+
+.login-story .gallery-frames img.on-slide {
+  animation: gate-photo 1100ms var(--ease-out) both;
+}
+@keyframes gate-photo { from { transform: scale(1.06); } to { transform: scale(1.03); } }
+
+.login-story .orbit-brand { animation: block-in 420ms var(--ease-out) 120ms both; }
+.gate-caption { animation: block-in 480ms var(--ease-out) 200ms both; }
+
+.login-form-wrap > * { animation: block-in 420ms var(--ease-out) both; }
+.login-form-wrap > *:nth-child(1) { animation-delay: 140ms; }
+.login-form-wrap > *:nth-child(2) { animation-delay: 190ms; }
+.login-form-wrap > *:nth-child(3) { animation-delay: 240ms; }
+.login-form-wrap > *:nth-child(4) { animation-delay: 290ms; }
+.login-form-wrap > *:nth-child(n+5) { animation-delay: 330ms; }
+
+/* Подпись над формой входа. Раньше здесь стоял официальный знак вуза —
+   правила конкурса запрещают его использовать. Теперь это набор своей
+   типографикой: название университета словами и прямая пометка о том, что
+   перед человеком конкурсный концепт, а не сервис РЭУ. */
+.gate-signature b {
+  color: var(--university-blue);
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -.015em;
+}
+.gate-signature span {
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+/* Карточки профилей на входе отзываются на выбор */
+.login-picker .demo-account { transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out); }
+
+.login-picker .demo-account[aria-pressed=true] { box-shadow: inset 0 0 0 2px var(--university-blue); }
+
+/* Подсказка под профилями: выбор подставляет и логин, и пароль, поэтому
+   человеку остаётся одна кнопка. Без этой строки поле пароля выглядело как
+   препятствие, хотя оно уже заполнено. */
+.picker-hint {
+  margin: -8px 0 16px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   16. Заявки
+   ============================================================ */
+
+/* Быстрые действия: цель крупнее, иконка в своей плашке */
+.service-choices a {
+  gap: var(--s4);
+  border-radius: var(--r-md);
+  animation: block-in var(--dur-3) var(--ease-out) both;
+}
+.service-choices a:nth-child(2) { animation-delay: 55ms; }
+.service-choices a:nth-child(3) { animation-delay: 105ms; }
+.service-choices a > svg:first-child {
+  width: 38px; height: 38px; padding: 9px;
+  border-radius: var(--r-sm);
+  background: var(--accent-soft);
+  color: var(--university-blue);
+  box-sizing: content-box;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+
+.service-choices a > svg:last-child { transition: transform var(--dur-2) var(--ease-spring); }
+
+/* Акцентная полоса строки заявки — общая для всех строк, раздел 25 */
+
+/* История статусов: точки появляются по цепочке */
+.status-timeline li { animation: row-in var(--dur-3) var(--ease-out) both; }
+.status-timeline li:nth-child(2) { animation-delay: 70ms; }
+.status-timeline li:nth-child(3) { animation-delay: 130ms; }
+.status-timeline li:nth-child(n+4) { animation-delay: 180ms; }
+
+/* Успешная отправка */
+.success-card { animation: block-in 420ms var(--ease-spring) both; }
+
+/* ============================================================
+   17. Уведомления
+   ============================================================ */
+
+.notification-card { position: relative; }
+.notification-card.unread { border-color: var(--line-strong); }
+
+.notification-icon { transition: transform var(--dur-2) var(--ease-spring); }
+
+/* Переключатель «Все / Непрочитанные» */
+.segmented > button { border-radius: var(--r-xs); }
+.segmented > button.selected { box-shadow: var(--shadow-raised); }
+
+/* ============================================================
+   18. Пустые состояния: знак, заголовок, пояснение, действие
+   Структура взята из разобранных дизайн-систем.
+   ============================================================ */
+
+.empty { animation: block-in var(--dur-3) var(--ease-out) both; }
+.empty-sign {
+  display: grid;
+  place-items: center;
+  width: 54px; height: 54px;
+  margin: 0 auto var(--s4);
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
+  color: var(--university-blue);
+}
+.empty h3 { font-size: 19px; }
+.empty p { max-width: 42ch; }
+
+/* ============================================================
+   19. Расписание
+   ============================================================ */
+
+/* Ячейки недели проявляются волной */
+.week-strip button { animation: cell-in 360ms var(--ease-out) both; }
+.week-strip button:nth-child(2) { animation-delay: 30ms; }
+.week-strip button:nth-child(3) { animation-delay: 60ms; }
+.week-strip button:nth-child(4) { animation-delay: 90ms; }
+.week-strip button:nth-child(5) { animation-delay: 120ms; }
+.week-strip button:nth-child(6) { animation-delay: 150ms; }
+.week-strip button:nth-child(7) { animation-delay: 180ms; }
+@keyframes cell-in { from { opacity: 0; transform: translate3d(0, 5px, 0); } to { opacity: 1; transform: none; } }
+
+.lesson-card { transition: background-color var(--dur-1) var(--ease-out); border-radius: var(--r-sm); }
+
+/* ============================================================
+   20. Профиль
+   ============================================================ */
+
+.identity-card { animation: block-in var(--dur-3) var(--ease-out) both; }
+.identity-body dd { transition: color var(--dur-1) var(--ease-out); }
+
+/* ============================================================
+   21. Тишина по запросу пользователя
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .login-story, .login-story .orbit-brand, .gate-caption, .login-form-wrap > *, .login-story .gallery-frames img.on-slide, .service-choices a, .status-timeline li, .success-card, .empty, .week-strip button, .identity-card { animation: none !important; }
+  
+  
+}
+
+/* ============================================================
+   22. Состояния, которые до сих пор не были видны глазу
+   Классы в разметке были, а правил к ним не было: сегодняшний
+   день, кнопка «Сегодня», переключатель движения.
+   ============================================================ */
+
+/* Сегодняшний день в полосе недели: раньше его отмечала только
+   точка в 4 px, и при выборе другого дня «сегодня» терялось. */
+.week-strip button.is-today:not(.selected) {
+  color: var(--university-blue);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.week-strip button.is-today:not(.selected) strong { color: var(--university-blue); }
+.week-strip i { background: var(--university-blue); width: 5px; height: 5px; bottom: 7px; left: calc(50% - 2.5px); }
+.week-strip button.selected i { background: var(--ice); }
+
+/* Кнопка «Сегодня» бессмысленна, когда сегодня уже открыто:
+   в этом состоянии разметка ставит disabled, а здесь — вид. */
+.today-button[disabled] {
+  opacity: 1;
+  color: var(--university-blue);
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+
+/* Свой раздел заявок отделён от справочника университета */
+.requests-section { display: block; margin-bottom: var(--s6); }
+.requests-section .section-heading { margin-bottom: var(--s3); }
+.requests-section .requests-count { margin: 0; white-space: nowrap; }
+
+/* Компактная карточка занятия в недельной сетке */
+.week-day .lesson-card.compact { padding-block: var(--s3); }
+
+/* Нижний блок профиля был голым текстом на фоне страницы: подпись и две
+   кнопки висели в столбик без поверхности. Теперь это такая же панель,
+   как соседние карточки, а действия собраны вместе справа. */
+.profile-footer {
+  display: flex;
+  /* В globals.css остался столбец с прежней вёрстки — задаём направление явно */
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4) var(--s6);
+  flex-wrap: wrap;
+  padding: var(--s5) clamp(16px, 2.4vw, 28px);
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-raised);
+}
+.profile-footer p { margin: 0; color: var(--muted); font-size: 13px; }
+.profile-actions { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
+.profile-actions .button { flex: none; }
+
+@media (max-width: 650px) {
+  .profile-footer { align-items: stretch; flex-direction: column; }
+  .profile-actions .button { flex: 1 1 auto; justify-content: center; }
+}
+
+/* ============================================================
+   23. Мелкая отделка: выделение текста и полосы прокрутки
+   ============================================================ */
+
+::selection { background: var(--ice); color: var(--navy); }
+.reu-groups, .main-content { scrollbar-color: var(--line-strong) transparent; scrollbar-width: thin; }
+
+/* ============================================================
+   24. Печать: расписание, заявка и ведомость на бумаге
+   Студент распечатывает страницу — убираем интерфейс и оставляем
+   данные. Фон, тени и движение на бумаге не нужны.
+   ============================================================ */
+
+@media print {
+  :root { --page: #fff; --shadow-raised: none; --shadow-float: none; --shadow-deep: none; }
+
+  .app-shell { display: block; }
+  .app-header, .mobile-nav, .skip-link, .toast, .schedule-toolbar, .requests-pagination, .campus-gallery, .notification-actions, .profile-footer .button, .week-strip { display: none !important; }
+
+  .workspace::before, .workspace::after { display: none; }
+  .workspace, .main-content { padding: 0; max-width: none; }
+
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+
+  .card, .empty, .form-aside, .identity-card, .requests-list, .record-list, .record-inspector, .atlas-itinerary, .atlas-index, .reu-directory, .reu-catalogue, .reu-news, .reu-contacts {
+    box-shadow: none;
+    border-color: #9aa7bb;
+    break-inside: avoid;
+  }
+
+  /* Тёмные плашки на бумаге съедают тонер и теряют текст */
+  .semester-hero, .atlas-spread, .assessment-ticket, .login-story {
+    background: #fff !important;
+    color: var(--ink) !important;
+  }
+  .semester-count strong, .atlas-readout > b, .atlas-station h2, .atlas-address b, .ticket-date, .assessment-ticket strong { color: var(--ink) !important; }
+  .semester-count p, .semester-count small, .atlas-dial-head, .atlas-address, .atlas-next, .atlas-station > p { color: #3d4b63 !important; }
+  .atlas-print, .assessment-ticket::before { display: none; }
+
+  .lesson-card, .request-card, .notification-card, .atlas-row { break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; }
+
+  /* Ссылка на бумаге бесполезна без адреса */
+  .reu-external::after, .lesson-source::after { content: " (" attr(href) ")"; font-size: 10px; word-break: break-all; }
+  .page-footer { border-top: 1px solid #9aa7bb; }
+
+  /* Подборку кампуса печатать незачем: 58 фотографий съедят картридж,
+     а данных в них нет. Вместо сетки остаётся строка с адресом раздела. */
+  .vibe-grid, .vibe-filters, .vibe-viewer { display: none !important; }
+  .vibe-note::after { content: " Фотографии открываются в разделе «Вайб Плехановки»."; }
+
+  /* Открытое расписание печатают ради занятий, а не ради выбора группы */
+  .public-head .button, .public-picker .reu-search, .group-suggest { display: none !important; }
+  .public-main { padding: 0; max-width: none; }
+}
+
+/* ============================================================
+   25. Наведение — один язык на всё приложение
+   До этого ховеры жили в трёх файлах: у одной строки заявки было три
+   правила, меню в одном файле серело, в другом синело, кнопки
+   подпрыгивали, меню съезжало вбок, иконка уведомления качалась.
+   Всё это снято; здесь единственный владелец наведения.
+
+   Пять правил:
+   1. Поверхность (карточка, панель, список) — пятно света за курсором
+      и чуть более тёмная рамка. Приём Magic UI «Magic Card».
+   2. Строка внутри списка — ровная заливка, без сдвига текста и без
+      полосы сбоку: акцентная полоса у карточки — шаблонный приём.
+      Сдвиг содержимого при наведении — главный «ИИ-ляп», его нет.
+   3. Стрелка перехода смещается на 2 px по своему направлению.
+   4. Ссылка — подчёркивание проявляется, а не появляется скачком.
+   5. Кнопка меняет цвет, но не поднимается.
+   Ничто не масштабируется и не вращается. Всё — только на устройствах
+   с мышью: на сенсорном экране ховер «залипает» после касания.
+   ============================================================ */
+
+@property --lit { syntax: "<number>"; inherits: false; initial-value: 0; }
+
+:root {
+  --hover-wash: #edf3fc;
+  --hover-line: #a9bad2;
+  --spot: 202, 221, 255;
+}
+
+/* --- Переходы: один набор длительностей для всего, на что наводят ---
+   Строка заявки несёт класс .card из разметки, но по смыслу это строка
+   списка: ей не нужны ни свет поверхности, ни тень карточки. Раньше она
+   получала и то и другое сразу, и подсветка ложилась неровно. */
+.card:not(.request-card), .record-list, .record-inspector, .atlas-itinerary, .atlas-index, .atlas-lower .week-plan, .identity-card, .profile-footer, .requests-list, .service-choices a, .notification-card, .week-strip, .form-aside, .empty, .login-picker .demo-account, .atlas-dial {
+  --mx: 50%;
+  --my: 50%;
+  transition:
+    --lit var(--dur-3) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out),
+    background-color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out);
+}
+
+.desktop-nav a, .header-profile, .orbit-brand b, .segmented > button, .record-filters button, .reu-tabs a, .reu-tabs button, .text-link, .text-button, .back-link, .reu-external, .footer-links a, .lesson-source, .grade-source a, details > summary, .icon-button, .password-toggle, .task-tools button, .atlas-itinerary header > a, .atlas-index header > a, .atlas-row > a, .reu-contacts p a, .exam-rubric a, .lesson-homework a, .task-copy a, .task-confirm button, .plan-detail-link, .field input, .field select, .field textarea, .reu-filters select, .reu-search, .task-form input, .task-form textarea {
+  transition:
+    color var(--dur-1) var(--ease-out),
+    background-color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out),
+    text-decoration-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
+}
+
+/* Строки: место под заливку задано постоянно, поэтому при
+   наведении ничего не сдвигается — меняется только цвет. */
+/* Заливка строки идёт от края до края контейнера. Раньше строка выходила
+   за свой текст на 12 px, а поля контейнера были 20–30 px, и при наведении
+   слева и справа оставался белый зазор. Теперь поле контейнера задаётся
+   одной переменной --pad-x, и строка выходит ровно на неё. */
+.card { --pad-x: 27px; padding-inline: var(--pad-x); }
+.reu-directory, .reu-catalogue, .reu-guide, .reu-news, .reu-contacts { --pad-x: clamp(16px, 2.5vw, 30px); }
+.atlas-itinerary, .atlas-index, .atlas-lower .week-plan { --pad-x: clamp(16px, 2.3vw, 30px); padding-inline: var(--pad-x); }
+.requests-list { --pad-x: 26px; padding-inline: var(--pad-x); }
+@media (max-width: 760px) { .card { --pad-x: 21px; } }
+@media (max-width: 650px) { .atlas-itinerary, .atlas-index, .atlas-lower .week-plan { --pad-x: 15px; } }
+@media (max-width: 600px) { .requests-list { --pad-x: 20px; } }
+@media (max-width: 520px) { .card { --pad-x: 20px; } }
+
+.atlas-row, .index-line, .lesson-card, .request-card, .reu-groups a {
+  position: relative;
+  padding-inline: var(--pad-x, var(--s3));
+  margin-inline: calc(var(--pad-x, var(--s3)) * -1);
+  border-radius: 0;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+/* Справочник услуг — сетка в две колонки: заливка до краёв карточки
+   залезла бы в соседнюю колонку, поэтому здесь строка со скруглением */
+.reu-services a {
+  position: relative;
+  padding-inline: var(--s3);
+  margin-inline: calc(var(--s3) * -1);
+  border-radius: var(--r-sm);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+/* Строка заявки — строка, а не карточка: без тени и с ровным краем.
+   Плашка иконки в палитре РЭУ вместо прежнего сиреневого #f0f1f8. */
+.request-card { box-shadow: none; background-image: none; }
+.request-card > .icon-tile { background: var(--accent-soft); color: var(--university-blue); transition: background-color var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out); }
+
+/* Стрелки перехода — у всех одинаковая пружина */
+svg:is([class*="arrow-up-right"], [class*="arrow-right"], [class*="chevron-right"], [class*="arrow-left"]) {
+  transition: transform var(--dur-2) var(--ease-spring);
+}
+
+/* Подчёркивание ссылок в покое приглушено, при наведении набирает цвет */
+.reu-external, .footer-links a, .lesson-source, .grade-source a, .exam-rubric a, .lesson-homework a, .task-copy a {
+  text-decoration-line: underline;
+  text-decoration-color: rgba(20, 78, 152, .32);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+details > summary { cursor: pointer; border-radius: var(--r-xs); }
+.header-profile { border-radius: var(--r-sm); padding: 4px 6px; margin: -4px -6px; }
+
+@media (hover: hover) and (pointer: fine) {
+
+  /* 1. Поверхности: свет за курсором. Пятно крупное и прозрачное:
+     оно должно читаться как освещение, а не как блик под мышью. */
+  :is(.card:not(.request-card), .record-list, .record-inspector, .atlas-itinerary, .atlas-index, .atlas-lower .week-plan, .identity-card, .profile-footer, .requests-list, .service-choices a, .notification-card, .week-strip, .form-aside, .empty, .login-picker .demo-account) {
+    background-image: radial-gradient(520px circle at var(--mx) var(--my), rgba(var(--spot), calc(.3 * var(--lit))), transparent 75%);
+  }
+  :is(.card:not(.request-card), .record-list, .record-inspector, .atlas-itinerary, .atlas-index, .atlas-lower .week-plan, .identity-card, .profile-footer, .requests-list, .service-choices a, .notification-card, .form-aside, .empty, .login-picker .demo-account)[data-lit] {
+    --lit: 1;
+    border-color: var(--hover-line);
+    box-shadow: var(--shadow-float);
+  }
+  .week-strip[data-lit] { --lit: 1; }
+  /* На тёмной плашке дня свет тише и холоднее */
+  .atlas-dial {
+    background-image: radial-gradient(360px circle at var(--mx) var(--my), rgba(var(--spot), calc(.12 * var(--lit))), transparent 75%);
+  }
+  .atlas-dial[data-lit] { --lit: 1; }
+
+  /* 2. Строки списков: одна ровная заливка, без света и тени */
+  :is(.atlas-row, .index-line, .lesson-card, .request-card, .reu-groups a, .reu-services a):hover { background-color: var(--hover-wash); }
+  .request-card:hover > .icon-tile { background: #fff; box-shadow: inset 0 0 0 1px var(--line-strong); }
+  .reu-groups a:hover strong, .reu-services a:hover span { color: var(--university-blue); }
+  .lesson-card.current:hover { background-color: var(--wash-blue); }
+
+  /* 3. Стрелки перехода. Классы lucide-* иконки получают при отрисовке,
+     в исходниках их нет — поэтому правила записаны через [class*=…],
+     а не через имя класса, которое автоматическая чистка сочла бы мёртвым. */
+  :is(a, button, .request-card, .index-line, .atlas-row):hover svg[class*="arrow-up-right"] { transform: translate(2px, -2px); }
+  :is(a, button, .request-card, .index-line):hover svg:is([class*="arrow-right"], [class*="chevron-right"]):not([class*="arrow-up-right"]) { transform: translateX(2px); }
+  .back-link:hover svg[class*="arrow-left"] { transform: translateX(-2px); }
+
+  .index-line:hover > span { color: var(--university-blue); }
+
+  /* 4. Ссылки */
+  :is(.reu-external, .footer-links a, .lesson-source, .grade-source a, .exam-rubric a, .lesson-homework a, .task-copy a):hover {
+    color: var(--accent-hover);
+    text-decoration-color: currentColor;
+  }
+  :is(.text-link, .text-button, .plan-detail-link, .atlas-itinerary header > a, .atlas-index header > a, .atlas-row > a, .reu-contacts p a, .task-confirm button):hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+    text-decoration-color: rgba(20, 78, 152, .45);
+    text-underline-offset: 4px;
+  }
+  .back-link:hover { color: var(--university-blue); }
+  details > summary:hover { color: var(--accent-hover); text-decoration: underline; text-decoration-color: rgba(20, 78, 152, .4); text-underline-offset: 4px; }
+
+  /* 5. Кнопки — цвет, без подъёма */
+  .button.primary:not(:disabled):hover { background: var(--accent-hover); box-shadow: 0 2px 10px -3px rgba(13, 60, 120, .45); }
+  .button.secondary:not(:disabled):hover { background: var(--hover-wash); border-color: var(--hover-line); color: var(--university-blue); }
+  .button.ghost:not(:disabled):hover { background: var(--hover-wash); color: var(--university-blue); }
+  .icon-button:not(:disabled):hover, .password-toggle:hover, .task-tools button:hover { background: var(--accent-soft); color: var(--university-blue); }
+
+  /* Переключатели и вкладки: невыбранный вариант откликается мягче выбранного */
+  .segmented > button:not(.selected):hover, .record-filters button:not([aria-pressed=true]):hover { color: var(--ink); background: rgba(255, 255, 255, .7); }
+  .reu-tabs :is(a:not([aria-current]), button:not([aria-pressed=true])):hover { background: var(--hover-wash); border-color: var(--hover-line); color: var(--university-blue); }
+  .week-strip button:not(.selected):hover { background: var(--hover-wash); color: var(--university-blue); }
+
+  /* Быстрые действия и профили на входе */
+  .service-choices a:hover > svg:first-child { background: var(--ice); }
+  .login-picker .demo-account:not([aria-pressed=true]):hover { background-color: #fff; }
+
+  /* Плашка ближайшего контроля: колоннада проступает чуть сильнее */
+  .assessment-ticket::before { transition: opacity var(--dur-3) var(--ease-out); }
+  .assessment-ticket:hover::before { opacity: .9; }
+  .assessment-ticket button:hover .ticket-action { color: var(--university-blue); }
+
+  /* Поля ввода: рамка темнеет, фон светлеет — поле «готово к вводу» */
+  :is(.field input, .field select, .field textarea, .reu-filters select, .reu-search, .task-form input, .task-form textarea):not(:focus):not(:focus-within):hover { border-color: var(--hover-line); background-color: #fff; }
+  .plan-label:hover .plan-item-title { color: var(--university-blue); }
+
+  /* Боковое меню на тёмном фоне */
+  .desktop-nav a:not([aria-current="page"]):hover { background: rgba(202, 221, 255, .1); color: #fff; }
+  .desktop-nav a:not([aria-current="page"]):hover > svg { opacity: 1; }
+  .orbit-brand:hover b { color: var(--ice); }
+  .header-profile:hover { background: rgba(202, 221, 255, .08); }
+  .header-profile:hover .monogram { box-shadow: inset 0 0 0 1px rgba(202, 221, 255, .6); }
+  .app-header .icon-button:not(:disabled):hover { background: rgba(202, 221, 255, .12); color: var(--ice); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-lit] { transition: none !important; }
+}
+@media print {
+  [data-lit] { background-image: none !important; }
+}
+
+/* ============================================================
+   26. Доводка по проходу всех экранов на 1600 и 390 px
+   Каждое правило ниже закрывает конкретный дефект, найденный
+   глазами на живом интерфейсе 2026-11-14.
+   ============================================================ */
+
+/* Цвета меток и плашек иконок: прежние #eef0fc / #3049a3 были сиреневыми
+   и в палитру РЭУ не входили. Синие метки теперь из палитры, нейтральная —
+   из её серо-синих тонов, предупреждающая остаётся тёплой. */
+.purple, .green, .lilac, .badge.purple, .badge.green, .badge.lilac, .icon-tile.purple, .icon-tile.green, .avatar.lilac {
+  color: var(--university-blue);
+  background: var(--accent-soft);
+}
+.gray, .badge.gray { color: var(--ink-soft); background: #eef2f7; }
+.orange, .badge.orange, .icon-tile.orange { color: #7a4f12; background: #fbf0dc; }
+
+/* Статус на странице обращения висел мелкой надписью в углу заголовка.
+   Теперь это полноценная метка статуса рядом с названием. */
+.page-title > .badge {
+  align-self: center;
+  flex: none;
+  padding: 7px 14px;
+  border-radius: var(--r-pill);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* «Понедельник, 9 Ноября»: capitalize делал заглавной каждое слово,
+   что по-русски ошибка. Заглавной остаётся только первая буква. */
+.week-day .section-heading h2 { text-transform: none; }
+:is(.week-day, .schedule-reveal) > .section-heading h2::first-letter { text-transform: uppercase; }
+
+/* Нижние карточки главной стоят одной высоты: под коротким планом
+   была пустая дыра рядом с длинным блоком деканата. */
+.atlas-lower { align-items: stretch; }
+.atlas-lower > * { height: 100%; }
+
+/* Ссылка внутри абзаца — строчная: inline-flex раздувал высоту строки
+   (подсказка справа от формы заявки, справочник услуг). */
+/* .text-link несёт min-height 44 px как цель касания; для ссылки внутри
+   текста правило доступности это требование снимает. */
+p :is(.reu-external, .text-link) { display: inline; min-height: 0; }
+p :is(.reu-external, .text-link) svg { display: inline; vertical-align: -2px; margin-left: 1px; }
+
+.link-arrow {
+  display: inline-block;
+  flex: none;
+  vertical-align: -.17em;
+  margin-inline-start: .22em;
+}
+
+@media (max-width: 760px) {
+  /* Панель расписания была в три ряда: дата и выгрузка теперь в одном.
+     Подпись «Выбрать дату» остаётся для чтения с экрана. */
+  .schedule-toolbar { gap: var(--s2); }
+
+}
+
+@media (max-width: 650px) {
+  /* Подпись перехода в блоке «В деканате» остаётся на одной строке. */
+  .index-line > span { max-width: none; white-space: nowrap; }
+  .index-line > div { min-width: 0; }
+}
+
+/* ============================================================
+   27. Второй проход по замечаниям 2026-11-14
+   ============================================================ */
+
+
+/* Пока данные грузятся, страница короче окна, и фон обрывался
+   горизонтальной кромкой посреди экрана */
+.workspace { min-height: 100svh; }
+
+/* --- Источник расписания: тихая строка под заголовком, не карточка.
+       Раньше это был отдельный белый блок, который выглядел частью
+       самого расписания. */
+.schedule-source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  margin: -14px 0 22px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.source-group {
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  background: var(--accent-soft);
+  color: var(--university-blue);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.schedule-source a, .schedule-source button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  min-height: 28px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 550;
+  text-decoration: none;
+}
+.schedule-source button:disabled { color: var(--muted); }
+.source-ok { display: inline-flex; align-items: center; gap: 4px; color: var(--university-blue); }
+.source-error { color: #8a331a; }
+
+/* --- Панель расписания: режим, дата в одном составном переключателе
+       «‹ дата ›» и кнопка «Сегодня». Все элементы одной высоты 44 px. */
+.schedule-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-bottom: 18px; }
+.schedule-toolbar .segmented { flex: none; padding: 3px; min-height: 44px; }
+.schedule-toolbar .segmented > button { min-height: 36px; padding: 6px 16px; }
+.date-nav {
+  display: flex;
+  align-items: stretch;
+  height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-raised);
+}
+.date-nav > button {
+  width: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  background: transparent;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.date-nav > button:first-child { border-right: 1px solid var(--line-soft); }
+.date-nav > button:last-child { border-left: 1px solid var(--line-soft); }
+/* Значок календаря — свой, из того же набора, что стрелки: системный чёрный
+   глиф выбивался из набора и забирал место у самой даты. Он стоит слева,
+   а выбор даты открывается кликом по всему полю. */
+.date-field {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-inline: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease-out);
+}
+.date-field > svg { flex: none; }
+.date-field input::-webkit-calendar-picker-indicator { display: none; }
+.date-field input {
+  height: 100%;
+  min-width: 96px;
+  padding: 0;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.date-field input:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; border-radius: var(--r-xs); }
+/* Срок в личной задаче: системный значок остаётся, но в цвете палитры */
+.task-form input[type="date"]::-webkit-calendar-picker-indicator { opacity: .55; cursor: pointer; }
+.schedule-toolbar .today-button { min-height: 44px; padding-inline: 20px; }
+
+@media (max-width: 760px) {
+  .schedule-toolbar { gap: 8px; }
+  .schedule-toolbar .segmented { flex: 1 1 100%; display: grid; grid-template-columns: 1fr 1fr; }
+  .schedule-toolbar .segmented > button { min-height: 36px; }
+  /* Узкая база, чтобы «‹ дата ›» и «Сегодня» уместились в одну строку:
+     при базе auto поле даты раздвигало переключатель на всю ширину и
+     кнопка уходила на третью строку. */
+  .date-nav { flex: 1 1 200px; min-width: 0; }
+  .date-field { flex: 1; justify-content: center; padding-inline: 10px; gap: 7px; }
+  .date-field input { width: auto; min-width: 0; font-size: 16px; }
+  .schedule-toolbar .today-button { flex: none; padding-inline: 16px; }
+}
+
+.day-line { margin-top: auto; padding-top: 17px; }
+.day-line-frame {
+  padding: 12px 14px;
+  border: 1px solid rgba(203, 223, 255, .22);
+  border-radius: 12px;
+  background: rgba(7, 23, 54, .24);
+}
+.day-line-frame h3 { margin: 0 0 12px; color: #e1ecfd; font-size: 12px; font-weight: 630; }
+.day-line-plot { position: relative; margin-inline: 1px; }
+.day-line-rail { position: relative; height: 9px; overflow: hidden; border-radius: var(--r-pill); background: rgba(8, 21, 49, .55); }
+.day-line-pair {
+  position: absolute;
+  inset-block: 1px;
+  min-width: 2px;
+  border-radius: var(--r-pill);
+  background: #b7d4fb;
+  box-shadow: inset 1px 0 rgba(11, 36, 75, .55), inset -1px 0 rgba(11, 36, 75, .55);
+}
+.day-line-pair.is-done { background: #94acd0; }
+.day-line-pair.is-now { background: #eff6ff; z-index: 1; }
+.day-line-now {
+  position: absolute;
+  z-index: 2;
+  inset-block: -3px;
+  width: 2px;
+  border-radius: 2px;
+  background: white;
+  box-shadow: 0 0 0 1.5px #254979;
+  transform: translateX(-50%);
+  transition: left 300ms var(--ease-out);
+}
+.day-line-now::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+}
+.day-line-bounds { display: flex; justify-content: space-between; align-items: start; gap: 8px; margin-top: 8px; color: #c7d9f4; font-size: 11px; }
+.day-line-bounds > span { display: flex; flex-direction: column; gap: 1px; }
+.day-line-bounds > span:last-child { text-align: right; }
+.day-line-bounds time { order: -1; color: #f5f9ff; font-size: 15px; font-weight: 690; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.day-line-ranges { display: flex; flex-wrap: wrap; gap: 6px; margin: 11px 0 0; padding: 0; list-style: none; }
+.day-line-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 3px 8px;
+  border: 1px solid rgba(189, 216, 255, .28);
+  border-radius: 6px;
+  color: #e5efff;
+  font-size: 11px;
+  font-weight: 640;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.day-line-range::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #b7d4fb; }
+.day-line-range.is-done::before { background: #94acd0; }
+.day-line-range.is-now { color: #102d55; background: #e5efff; border-color: #e5efff; }
+.day-line-range.is-now::before { background: #315987; }
+.day-line-range:not(.is-now):hover { background: rgba(192, 216, 255, .14); }
+@media (max-width: 450px) {
+  .day-line-range { gap: 4px; padding-inline: 5px; }
+  .day-line-ranges { gap: 5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .day-line-now, .day-line-range { transition: none; }
+}
+
+.lesson-split {
+  container-type: inline-size;
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  background: var(--wash);
+}
+.lesson-split-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 12px; margin: 0 2px 8px; }
+.lesson-slot-time { color: var(--ink); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lesson-split-head h3 { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
+.lesson-split-head div > span { color: var(--muted); font-size: 11px; }
+.lesson-split-items { display: grid; gap: 6px; }
+@container (min-width: 520px) {
+  .lesson-split-items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.lesson-split-items .split-lesson {
+  display: block;
+  margin: 0;
+  padding: 9px 11px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+}
+.split-lesson .lesson-top { margin-bottom: 4px; }
+.split-lesson .lesson-meta { gap: 4px 12px; margin-top: 4px; }
+.lesson-meta > span { align-items: flex-start; min-width: 0; max-width: 100%; }
+.lesson-meta > span > svg { flex: none; margin-top: 2px; }
+.lesson-meta > span > span { min-width: 0; overflow-wrap: anywhere; }
+.lesson-actions { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 12px; margin-top: 6px; }
+.lesson-actions .lesson-homework, .lesson-actions .lesson-source { margin-top: 0; min-width: 0; overflow-wrap: anywhere; }
+.lesson-actions .lesson-homework[open] { flex-basis: 100%; }
+.lesson-actions .lesson-homework summary { min-height: 24px; line-height: 24px; }
+.split-lesson .lesson-homework summary { font-size: 12px; }
+.atlas-variant a { display: grid; justify-items: start; gap: 5px; overflow-wrap: anywhere; font-size: 12px; color: var(--university-blue); }
+.atlas-variant small, .atlas-variant del { color: var(--muted); }
+.atlas-variant del { margin-inline-end: 4px; }
+
+/* --- Карточка профиля: показатели плитками на любой ширине */
+.identity-body dl > div { min-width: 92px; padding: 10px 14px; border-radius: var(--r-sm); background: var(--wash); }
+.identity-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+@media (max-width: 650px) {
+  /* На телефоне тёмный квадрат «АЛ» сжимал текст в узкую колонку.
+     Теперь шапка «монограмма + группа и имя», под ней всё на всю ширину;
+     .identity-body растворяется, его части встают в общую сетку. */
+  .identity-card {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-areas: "photo group" "photo name" "prog prog" "stats stats" "act act";
+    column-gap: 14px;
+    align-items: center;
+    padding: 18px;
+  }
+  .identity-photo.identity-monogram { grid-area: photo; width: 64px; height: 64px; min-height: 0; border-radius: 16px; }
+  .identity-photo.identity-monogram .monogram.size-lg { font-size: 22px; }
+  .identity-body { display: contents; }
+  .identity-group { grid-area: group; align-self: end; font-size: 12px; }
+  .identity-body h2 { grid-area: name; align-self: start; margin: 2px 0 0; font-size: 20px; line-height: 1.2; }
+  .identity-body > p { grid-area: prog; margin-top: 14px; font-size: 14px; line-height: 1.5; }
+  .identity-body dl { grid-area: stats; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 16px 0; }
+  .identity-body dl > div { min-width: 0; padding: 10px 12px; }
+  .identity-body dd { font-size: 17px; overflow-wrap: anywhere; }
+  .identity-actions { grid-area: act; }
+  .identity-actions > a { flex: 1 1 auto; }
+}
+
+/* --- Подпись автора и лицензии под архивным снимком на странице объявлений */
+.campus-archive figcaption a { color: inherit; text-decoration: underline; text-decoration-color: rgba(83, 98, 122, .4); text-underline-offset: 2px; }
+
+@media (hover: hover) and (pointer: fine) {
+  .date-nav > button:hover { background: var(--hover-wash); color: var(--university-blue); }
+  .schedule-source a:hover, .schedule-source button:not(:disabled):hover { color: var(--accent-hover); text-decoration: underline; text-underline-offset: 3px; }
+  .campus-archive figcaption a:hover { text-decoration-color: currentColor; }
+}
+@media print {
+  .schedule-source button, .day-line { display: none; }
+}
+
+/* ============================================================
+   28. Полный прогон 2026-11-14: мелочи, которые делают интерфейс
+   цельным. Каждое правило закрывает найденный недочёт.
+   ============================================================ */
+
+/* Один радиус у всех карточек и панелей. Раньше было 14, 16, 18 и 20 px
+   вперемешку — интерфейс выглядел собранным из разных кусков.
+   Крупные плашки главной и успеваемости остаются на 20 px как акцент. */
+.card:not(.request-card), .record-list, .record-inspector, .record-mobile,
+.atlas-itinerary, .atlas-index, .atlas-lower .week-plan, .identity-card,
+.requests-list, .form-aside, .notification-card, .profile-footer,
+.week-strip, .campus-archive, .lesson-split {
+  border-radius: var(--r-lg);
+}
+.atlas-spread, .semester-hero { border-radius: var(--r-xl); }
+
+/* Раскрывающиеся блоки: вместо браузерного треугольника «▶» — шеврон,
+   который плавно поворачивается при раскрытии */
+details > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  list-style: none;
+}
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin: 0 2px 0 1px;
+  border-right: 1.8px solid currentColor;
+  border-bottom: 1.8px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+details[open] > summary::before { transform: translate(0, -2px) rotate(45deg); }
+@media (prefers-reduced-motion: reduce) { details > summary::before { transition: none; } }
+
+/* Выпадающие списки: своя стрелка вместо серой системной */
+.field select, .reu-filters select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2353627a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px 16px;
+  cursor: pointer;
+}
+
+/* «Пары сегодня»: текущая и следующая пары отмечены словами,
+   раньше их выделял только цвет номера */
+.atlas-row.selected { background-color: var(--wash); }
+.row-chip {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  background: var(--accent-soft);
+  color: var(--university-blue);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.5;
+  vertical-align: 2px;
+  white-space: nowrap;
+}
+.row-chip.is-now { background: var(--university-blue); color: #fff; }
+
+/* Подпись к задачам плана: счётчик спокойнее основного текста */
+.plan-automatic summary span { margin-left: 0; color: var(--muted); font-weight: 500; }
+
+/* ============================================================
+   29. Открытое расписание и единый вход
+   Страница /timetable работает без кабинета, поэтому у неё своя
+   шапка: знак «Орбиты» слева, вход справа, дальше — обычные
+   карточки портала. Подсказка групп и плашка единого входа
+   собраны из тех же переменных палитры, без новых цветов.
+   ============================================================ */
+
+.public-page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+.public-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 1120px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px clamp(16px, 4vw, 40px) 0;
+}
+.public-head .orbit-brand { color: var(--ink); }
+.public-head .orbit-mark { color: var(--university-blue); }
+.public-head > .button { white-space: nowrap; }
+.public-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 26px clamp(16px, 4vw, 40px) 64px;
+}
+.public-main .page-title { margin-bottom: 22px; }
+
+.public-picker { display: grid; gap: 12px; }
+.public-picker > label { display: grid; gap: 8px; font-size: 13px; font-weight: 600; color: var(--ink); }
+.group-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.group-suggest button {
+  padding: 7px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--ink);
+  font: 600 13px/1.4 inherit;
+  cursor: pointer;
+  transition: background-color .18s var(--ease-out), border-color .18s var(--ease-out);
+}
+.group-suggest button:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
+.public-chosen { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0; }
+
+/* Плашка единого входа: один шаг вместо логина и пароля */
+.sso-gate {
+  display: grid;
+  gap: 14px;
+  margin: 22px 0 18px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--accent-soft);
+}
+.sso-gate p { margin: 0; color: var(--ink); font-size: 13px; line-height: 1.6; }
+
+/* Вход без кабинета: расписание своей группы с экрана входа */
+.public-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .18s var(--ease-out), background-color .18s var(--ease-out);
+}
+.public-entry:hover { border-color: var(--accent); background: var(--accent-soft); }
+.public-entry span { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.public-entry b { font-size: 13px; font-weight: 600; }
+.public-entry small { color: var(--muted); font-size: 11px; }
+.public-entry svg:first-child { color: var(--accent); flex: none; }
+
+@media (max-width: 760px) {
+  .public-head { padding-top: 14px; }
+  .public-main { padding-bottom: 42px; }
+}
+@media (max-width: 420px) {
+  .public-head { gap: 8px; }
+  .public-head .orbit-mark { width: 29px; height: 29px; }
+  .public-head .orbit-brand b { font-size: 21px; }
+  .public-head .orbit-brand small { font-size: 9px; }
+  .public-head > .button { gap: 5px; padding-inline: 9px; font-size: 12px; }
+}
+
+.notification-list { gap: 9px; }
+.notification-list .notification-card { padding-block: 16px; }
+.notification-meta { margin-bottom: 5px; }
+.notification-content > p { margin-top: 5px; line-height: 1.55; }
+.notification-actions { margin-top: 7px; }
+@media (min-width: 1060px) {
+  .notification-content { display: grid; grid-template-columns: minmax(0,1fr) auto; column-gap: 22px; }
+  .notification-content > :not(.notification-actions) { grid-column: 1; }
+  .notification-actions {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+  }
+}
+
+/* Карточка «Откуда данные» в профиле: три строки источников */
+.source-map { display: grid; gap: 14px; }
+.source-map dl { display: grid; gap: 12px; margin: 0; }
+.source-map dl > div {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 13px 0 0;
+  border-top: 1px solid var(--line);
+}
+.source-map dl > div:first-child { padding-top: 0; border-top: 0; }
+.source-map dt {
+  display: grid;
+  gap: 7px;
+  justify-items: start;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.source-map dd { margin: 0; display: grid; gap: 4px; }
+.source-map dd b { font-size: 13px; font-weight: 600; color: var(--ink); }
+.source-map dd p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.source-map dd small { color: #a2451f; font-size: 11px; }
+
+@media (max-width: 620px) {
+  .source-map dl > div { grid-template-columns: 1fr; gap: 8px; }
+  .source-map dt { grid-auto-flow: column; justify-content: start; align-items: center; gap: 9px; }
+}
+
+/* Открытая страница расписания: подпись источника стоит в карточке выбора,
+   а карточки дней — просто контейнеры списка. Пятно света за курсором
+   радиусом 520 px накрывало на них сразу несколько строк и читалось как
+   случайная синяя полоса, поэтому здесь светится только строка под курсором. */
+.public-picker .schedule-source { margin: 4px 0 0; }
+@media (hover: hover) and (pointer: fine) {
+  .public-main .day-card { background-image: none; }
+  .public-main .day-card[data-lit] { border-color: var(--line-soft); box-shadow: var(--shadow-raised); }
+}
+
+/* ============================================================
+   30. «Вайб Плехановки»
+   Подборка кадров кампуса. Сетка кладёт горизонтальные кадры в две
+   колонки, вертикальные — в одну, поэтому мозаика собирается без
+   пустот и без скриптов. Подпись проявляется при наведении, а по
+   клику кадр открывается во весь экран: там стрелки, Esc и счётчик.
+   ============================================================ */
+
+.vibe { display: grid; gap: var(--s4); }
+.vibe-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.vibe-filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+.vibe-filters button span { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.vibe-filters button[aria-pressed="true"] {
+  background: var(--university-blue);
+  border-color: var(--university-blue);
+  color: #fff;
+}
+.vibe-filters button[aria-pressed="true"] span { color: rgba(255, 255, 255, .72); }
+
+.vibe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  grid-auto-rows: 132px;
+  /* Плотная укладка: без неё вертикальный кадр оставлял рядом с собой пустую
+     клетку, и в мозаике появлялись дыры. */
+  grid-auto-flow: dense;
+  gap: 12px;
+}
+.vibe-cell {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--wash);
+  box-shadow: var(--shadow-raised);
+  cursor: zoom-in;
+}
+.vibe-cell.wide { grid-column: span 2; grid-row: span 2; }
+.vibe-cell.tall { grid-row: span 3; }
+/* Пока кадр грузится, в клетке видно спокойное мерцание, а не белый провал:
+   на длинной странице фотографии подгружаются по мере прокрутки. */
+.vibe-cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, var(--wash) 28%, #e4ecf7 46%, var(--wash) 64%);
+  background-size: 300% 100%;
+  animation: vibe-wait 1.5s linear infinite;
+}
+@keyframes vibe-wait { from { background-position: 150% 0; } to { background-position: -150% 0; } }
+.vibe-cell img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--dur-3) var(--ease-out);
+}
+.vibe-cell span {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 26px 12px 10px;
+  background: linear-gradient(transparent, rgba(10, 26, 49, .78));
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+}
+.vibe-cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.vibe-note { display: flex; align-items: center; gap: 7px; margin: 0; color: var(--muted); font-size: 12px; }
+
+.vibe-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 4vw, 48px);
+  background: rgba(8, 20, 38, .9);
+  animation: vibe-in 180ms var(--ease-out) both;
+}
+.vibe-viewer figure { margin: 0; display: grid; gap: 12px; justify-items: center; max-height: 100%; }
+.vibe-viewer img {
+  max-width: min(100%, 1180px);
+  max-height: calc(100svh - 150px);
+  width: auto;
+  height: auto;
+  border-radius: var(--r-md);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .7);
+}
+.vibe-viewer figcaption { display: grid; gap: 3px; justify-items: center; color: #fff; font-size: 14px; }
+.vibe-viewer figcaption small { color: rgba(255, 255, 255, .62); font-size: 12px; font-variant-numeric: tabular-nums; }
+.vibe-viewer button {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 50%;
+  background: rgba(10, 26, 49, .7);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+.vibe-close { top: clamp(12px, 3vw, 28px); right: clamp(12px, 3vw, 28px); }
+.vibe-prev { left: clamp(8px, 2vw, 24px); top: 50%; translate: 0 -50%; }
+.vibe-next { right: clamp(8px, 2vw, 24px); top: 50%; translate: 0 -50%; }
+@keyframes vibe-in { from { opacity: 0; } to { opacity: 1; } }
+
+@media (hover: hover) and (pointer: fine) {
+  .vibe-filters button:not([aria-pressed="true"]):hover { background: var(--hover-wash); color: var(--ink); border-color: var(--hover-line); }
+  .vibe-cell:hover img { transform: scale(1.04); }
+  .vibe-cell:hover span, .vibe-cell:focus-visible span { opacity: 1; transform: none; }
+  .vibe-viewer button:hover { background: rgba(20, 78, 152, .9); border-color: rgba(255, 255, 255, .4); }
+}
+@media (max-width: 620px) {
+  /* На двух колонках сетка с разной высотой кадров оставляла пустые клетки.
+     Здесь работает колоночная кладка: кадр идёт в своей пропорции, а колонки
+     заполняются подряд, без дыр. */
+  .vibe-grid {
+    display: block;
+    columns: 2;
+    column-gap: 9px;
+    grid-auto-rows: initial;
+  }
+  .vibe-cell, .vibe-cell.wide, .vibe-cell.tall {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 0 9px;
+    break-inside: avoid;
+  }
+  .vibe-cell img { height: auto; }
+  .vibe-cell span { opacity: 1; transform: none; padding: 20px 9px 8px; font-size: 11px; }
+  .vibe-viewer img { max-height: calc(100svh - 190px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vibe-cell img, .vibe-cell span, .vibe-viewer { transition: none; animation: none; }
+  .vibe-cell::before { animation: none; }
+}
+@media print { .vibe-viewer { display: none; } }
+
+/* Заголовок ближе к шапке: между синей полосой и названием страницы
+   оставалось около 36 px пустоты, а основное содержимое из-за этого
+   начиналось ниже, чем нужно. Правило общее для всех разделов. */
+.main-content { padding-block-start: 14px; }
+.studio-title, .page-title, .page-title.edition-title { margin-bottom: 18px; }
+@media (max-width: 820px) {
+  .main-content { padding-block-start: 10px; }
+  .studio-title, .page-title, .page-title.edition-title { margin-bottom: 14px; }
+}
+@media (max-width: 650px) {
+  .studio-title, .page-title, .page-title.edition-title { margin-bottom: 12px; }
+}
+
+/* Снизу хватает места, чтобы нижняя панель не накрыла последнюю строку:
+   прежние 92–118 px оставляли под подвалом пустое полполосы. */
+.main-content { padding-block-end: 28px; }
+.page-footer { margin-top: 24px; }
+@media (max-width: 820px) {
+  .main-content { padding-block-end: calc(68px + env(safe-area-inset-bottom)); }
+  .page-footer { margin-top: 18px; }
+}
+
+/* ============================================================
+   31. Сводная ведомость: все дисциплины семестра одним взглядом
+   Раньше баллы открывались по одной дисциплине, и общей картины
+   не было. Таблица даёт её сразу: балл, оценка и зачётные единицы
+   в строке, итог семестра — в подвале. На телефоне строка
+   складывается в две: название сверху, цифры под ним.
+   ============================================================ */
+
+/* Отступ как у соседних блоков ведомости: без него карточка прилипала
+   к тёмной сводке семестра. */
+.grade-summary { display: grid; gap: var(--s4); margin-top: 20px; }
+/* Заголовок и фильтры в одной строке, пока хватает ширины; на узком экране
+   фильтры уходят на свою строку и занимают её целиком. */
+.grade-summary .section-heading { flex-wrap: wrap; gap: 10px 16px; }
+.grade-summary .record-filters { flex: 0 1 auto; }
+@media (max-width: 620px) {
+  .grade-summary .record-filters { flex: 1 0 100%; display: grid; grid-template-columns: repeat(3, 1fr); }
+  .grade-summary .record-filters button { white-space: nowrap; }
+}
+.grade-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+.grade-col-score { width: 34%; }
+.grade-col-mark { width: clamp(88px, 10vw, 120px); }
+.grade-col-credits { width: clamp(66px, 7vw, 92px); }
+.grade-table thead th {
+  padding: 0 0 10px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-align: left;
+}
+.grade-table tbody th { padding: 0; text-align: left; }
+/* Строка раскрывается на месте: кнопка занимает всю ячейку названия,
+   стрелка показывает состояние, разбор баллов приходит следующей строкой. */
+.grade-table tbody th button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 12px 12px 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.grade-table tbody th button > span { display: grid; gap: 2px; min-width: 0; }
+.grade-table tbody th b { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.grade-table tbody th small { color: var(--muted); font-size: 11px; font-weight: 500; }
+.grade-table tbody th svg { flex: none; margin-left: auto; color: var(--muted); transition: transform var(--dur-2) var(--ease-out); }
+.grade-table tr.is-open th svg { transform: rotate(180deg); color: var(--accent); }
+.grade-table tr.is-open th b { color: var(--university-blue); }
+.grade-detail .score-sheet { margin: 0; padding: 12px 16px; border-radius: var(--r-sm); background: var(--wash); }
+.grade-detail .exam-rubric { margin-top: 0; }
+.grade-detail .exam-rubric li > span:first-child, .grade-detail .sheet-parts dt { min-width: 0; overflow-wrap: anywhere; }
+.grade-detail .sheet-parts dd { text-align: right; white-space: nowrap; }
+.record-empty { padding: 18px 0; color: var(--muted); text-align: left; }
+.grade-table td { padding: 12px 0; vertical-align: middle; }
+.grade-table .grade-detail > td { padding: 0 0 14px; text-align: left; }
+.grade-table tbody tr { border-top: 1px solid var(--line-soft); }
+.grade-table tbody tr:first-child { border-top: 0; }
+.grade-table .grade-score { text-align: right; }
+.grade-table :is(.grade-mark,.grade-credits) { padding-inline: 6px; text-align: center; }
+.grade-score-value, .grade-table tfoot td strong { color: var(--ink); font-size: 15px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.grade-score-value small, .grade-credit-unit { color: var(--muted); font-size: 11px; font-weight: 500; }
+.grade-bar { margin-top: 5px; height: 4px; border-radius: var(--r-pill); background: var(--wash); overflow: hidden; }
+.grade-bar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.grade-waiting { color: var(--muted); font-size: 12px; font-weight: 500; }
+.grade-result-pill {
+  display: inline-grid;
+  place-items: center;
+  min-width: min(36px, 100%);
+  max-width: 100%;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  background: var(--wash);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.gradebook [data-grade-tone="high"] { --rating-wash: #eff5f3; --rating-bar: #658c81; }
+.gradebook [data-grade-tone="middle"] { --rating-wash: #fff2e8; --rating-bar: #c68762; }
+.gradebook [data-grade-tone="low"] { --rating-wash: #f7f1f3; --rating-bar: #a67786; }
+.grade-table .grade-mark span.posted {
+  background: var(--rating-wash, var(--accent-soft));
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rating-bar, var(--accent)) 30%, transparent);
+}
+.gradebook .grade-bar i, .gradebook .part-track i { background: var(--rating-bar, var(--accent)); }
+.grade-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.grade-legend li { display: flex; align-items: center; gap: 6px; }
+.grade-legend li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rating-bar, #8898b1); }
+.grade-credit-value { color: var(--muted); font-variant-numeric: tabular-nums; }
+.grade-credit-unit { display: none; }
+/* Итог семестра — строка подписанных чисел, а не ещё одна дисциплина:
+   оценочная плашка здесь не нужна, зато нужна подпись под каждым значением. */
+.grade-table tfoot tr { border-top: 1px solid var(--line); }
+.grade-table tfoot th { padding-top: 14px; color: var(--ink); font-size: 13px; font-weight: 650; text-align: left; vertical-align: top; }
+.grade-table tfoot td { padding-top: 14px; vertical-align: top; }
+.grade-table tfoot td strong, .grade-table tfoot td small { display: block; }
+.grade-table tfoot td small { margin-top: 2px; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+
+@media (max-width: 620px) {
+  .grade-table colgroup { display: none; }
+  .grade-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .grade-table tbody tr, .grade-table tfoot tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, .86fr) minmax(0, .72fr);
+    align-items: center;
+    gap: 4px 8px;
+    padding: 11px 0;
+  }
+  .grade-table tbody th, .grade-table tfoot th { grid-column: 1 / -1; padding: 0 0 6px; }
+  .grade-table tfoot tr { align-items: start; padding-top: 13px; }
+  .grade-table td.record-empty { grid-column: 1 / -1; }
+  .grade-table tbody th button { padding: 0; }
+  .grade-table tbody tr.grade-detail { display: block; padding: 0 0 12px; }
+  .grade-table .grade-detail > td { display: block; width: 100%; padding: 0; }
+  .grade-table :is(td,td.grade-mark,td.grade-credits) { padding: 0; }
+  .grade-table .grade-score { text-align: left; }
+  .grade-credit-value, .grade-credit-unit { display: block; }
+  .grade-credit-unit { margin-top: 1px; line-height: 1.1; }
+}
+@media print { .grade-bar { display: none; } }
+
+.profile-group { margin-block: var(--s4); }
+.profile-group h2, .profile-group h3 { margin: 0; }
+.profile-group h3 { font-size: 15px; }
+.profile-group .section-heading { flex-wrap: wrap; gap: 10px 16px; }
+.profile-section-intro { color: var(--muted); font-size: 13px; margin: 5px 0 0; overflow-wrap: anywhere; }
+.profile-chat {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm);
+  background: var(--wash);
+  margin-top: 15px;
+}
+.profile-chat p, .profile-group-note p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.profile-chat .text-link { display: inline-flex; gap: 5px; align-items: center; margin-top: 5px; }
+.profile-resource-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  background: var(--accent-soft);
+  color: var(--university-blue);
+  border-radius: 10px;
+}
+.profile-group-actions { display: flex; flex-wrap: wrap; gap: 9px 16px; margin-top: 14px; }
+.profile-group-note { margin-top: 14px; }
+.profile-group-note p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.profile-group-form { max-width: 550px; }
+.profile-group-form > .field-hint { margin: 12px 0; }
+.profile-group-form .field { margin-bottom: 12px; }
+.profile-group-form textarea { min-height: 84px; }
+.profile-group-status { color: #215743; margin-bottom: 0; font-size: 13px; }
+
+.campus-map { margin-block: var(--s4); scroll-margin-top: 22px; }
+.campus-map-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.campus-map h2, .campus-map h3 { margin: 0; }
+.campus-map-head p, .campus-map-address p { color: var(--muted); margin: 4px 0 0; font-size: 13px; }
+.campus-map-modes > button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 65px; }
+.campus-map-modes > button[aria-pressed=true] { background: #fff; color: #234f84; box-shadow: 0 1px 5px #18395324; }
+.campus-map-viewport {
+  position: relative;
+  isolation: isolate;
+  height: clamp(320px, 44vw, 495px);
+  overflow: hidden;
+  border: 1px solid #d5e0f2;
+  border-radius: 15px;
+  cursor: grab;
+  touch-action: pan-y;
+  background:
+    radial-gradient(ellipse at 44% 10%, #fefefe 0, transparent 61%),
+    radial-gradient(circle, #cad7eb 1px, transparent 1px) 0 0 / 18px 18px,
+    #edf3fc;
+}
+.campus-map-viewport:active { cursor: grabbing; }
+.campus-map-viewport canvas, .campus-map-pins { position: absolute; width: 100%; height: 100%; inset: 0; }
+.campus-map-pins { pointer-events: none; }
+.campus-map-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  pointer-events: auto;
+  border: 1px solid #a8bddb;
+  border-radius: 50%;
+  color: #244a7a;
+  background: #fafdff;
+  box-shadow: 0 3px 8px #1e416126;
+  font-size: 11px;
+  font-weight: 750;
+}
+.campus-map-pin:not([style]), .campus-map-pin[hidden] { display: none; }
+.campus-map-pin[aria-pressed=true], .campus-map-choices button[aria-pressed=true] { color: white; background: #234f84; border-color: #234f84; }
+.campus-map-pin[aria-pressed=true] { z-index: 1; }
+.campus-map-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 14px;
+}
+.campus-map-bridge-key { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+.campus-map-bridge-key::before {
+  content: "";
+  width: 14px;
+  height: 7px;
+  border: 1px solid #8eafc9;
+  border-radius: 2px;
+  background: #c4dded;
+}
+.campus-map-controls, .campus-map-choices { display: flex; gap: 6px; flex-wrap: wrap; }
+.campus-map-controls { margin-left: auto; }
+.campus-map-controls button, .campus-map-choices button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 36px;
+  min-height: 36px;
+  padding-inline: 8px;
+  border: 1px solid #d5e0f2;
+  border-radius: 8px;
+  background: #f6f9fe;
+  color: #204773;
+  font-size: 12px;
+  font-weight: 640;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.campus-map-controls button:disabled { opacity: .46; }
+.campus-map-controls button:not(:disabled):hover, .campus-map-choices button[aria-pressed=false]:hover { background: #e7effa; }
+.campus-map-directory {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 1fr);
+  gap: 14px 22px;
+  align-items: start;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 14px;
+}
+.campus-map-address { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 10px; }
+.campus-map-address h3 { font-size: 16px; }
+.campus-map-address p { line-height: 1.45; }
+.campus-map-address .campus-map-detail { color: var(--ink); }
+.campus-guide {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+.campus-guide > section {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: #f8faff;
+}
+.campus-guide > section:only-child { grid-column: 1 / -1; }
+.campus-guide h4 { margin: 0 0 10px; font-size: 14px; }
+.campus-room-search {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding-inline: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  background: white;
+}
+.campus-room-search:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.campus-room-search input {
+  width: 100%;
+  min-height: 40px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+}
+.campus-room-search input:focus-visible { outline: none; }
+.campus-guide-list { list-style: none; padding: 0; margin: 8px 0 0; }
+.campus-guide-list li + li { border-top: 1px solid var(--line-soft); }
+.campus-room-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 14px;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 0;
+  font-size: 13px;
+  color: var(--ink);
+}
+.campus-room-link:hover strong { color: var(--university-blue); text-decoration: underline; text-underline-offset: 3px; }
+.campus-room-link small { display: block; margin-top: 4px; color: var(--muted); line-height: 1.4; }
+.campus-room-link svg { color: var(--university-blue); }
+.campus-room-number {
+  padding: 3px 7px;
+  border-radius: 5px;
+  color: var(--university-blue);
+  background: var(--accent-soft);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  max-width: 110px;
+  font-variant-numeric: tabular-nums;
+}
+.campus-show-rooms { margin-top: 6px; }
+.campus-room-empty { color: var(--muted); font-size: 13px; }
+.campus-guide-route { display: flex; align-items: center; justify-content: space-between; gap: 6px 12px; min-height: 38px; }
+.campus-guide-route > a { display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 12px; }
+.campus-guide-route > a:hover { color: var(--university-blue); text-decoration: underline; text-underline-offset: 3px; }
+.campus-guide-route > button { text-align: left; }
+@media (prefers-reduced-motion: no-preference) {
+  .campus-selection-in, .campus-guide { animation: campus-detail-in 320ms var(--ease-out) both; }
+  .campus-map-pin[aria-pressed=true]::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 1px solid #4e7db4;
+    border-radius: inherit;
+    animation: campus-pin-ring 540ms var(--ease-out) both;
+  }
+}
+@keyframes campus-detail-in {
+  from { opacity: .5; transform: translateY(5px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes campus-pin-ring {
+  from { transform: scale(1); opacity: .75; }
+  to { transform: scale(1.75); opacity: 0; }
+}
+.campus-map-source { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 5px 12px; margin-top: 15px; color: var(--muted); font-size: 12px; }
+.campus-map-source a { display: inline-flex; align-items: center; gap: 4px; color: var(--university-blue); }
+.source-map + .profile-footer { margin-top: var(--s4); }
+@media (max-width: 620px) {
+  .campus-map-viewport { height: clamp(235px, 68vw, 340px); }
+  .campus-map-directory { grid-template-columns: minmax(0, 1fr); }
+  .campus-guide { grid-template-columns: minmax(0, 1fr); }
+  .campus-room-number { max-width: 84px; }
+  .campus-room-search input { font-size: 16px; }
+}

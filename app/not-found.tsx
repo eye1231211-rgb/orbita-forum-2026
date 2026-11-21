@@ -1,0 +1,1 @@
+export default function NotFound(){return <main className="main-content"><section className="empty"><h1>Страница не найдена</h1><p>Возможно, ссылка изменилась. Перейдите на главную страницу.</p><a className="button primary" href="/">На главную</a></section></main>;}

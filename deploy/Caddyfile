@@ -1,0 +1,8 @@
+{
+    admin off
+}
+
+{$ORBIT_DOMAIN} {
+    encode zstd gzip
+    reverse_proxy orbit:3000
+}

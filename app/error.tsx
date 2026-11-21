@@ -1,0 +1,2 @@
+"use client";
+export default function ErrorPage({reset}: {reset:()=>void}) {return <main className="main-content"><section className="empty"><h1>Не получилось открыть страницу</h1><p>Произошла ошибка на сервере. Попробуйте ещё раз или вернитесь на главную.</p><button className="button primary" onClick={reset}>Попробовать ещё раз</button><a className="button secondary" href="/">На главную</a></section></main>;}

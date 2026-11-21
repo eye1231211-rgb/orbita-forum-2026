@@ -1,0 +1,28 @@
+-- Update only unchanged starter records. Preserve personal edits and request histories.
+UPDATE students SET group_name='15.27Д-БИ01/25б' WHERE id='student-alina' AND group_name='ДЕМО-БИ-25';
+UPDATE students SET group_name='15.25Д-ЭФК01/24б' WHERE id='student-mark' AND group_name='ДЕМО-ФК-24';
+UPDATE requests SET message='Нужна справка об обучении для участия в учебном проекте.' WHERE id='demo-request-alina' AND message='Демонстрационная справка для учебного проекта.';
+UPDATE requests SET message='Нужна справка об обучении для участия в учебном проекте.' WHERE id='demo-request-mark' AND message='Демонстрационная справка для учебного проекта.';
+UPDATE request_history SET note='Обращение зарегистрировано в личном кабинете.' WHERE id='demo-request-alina-history-0' AND note='Вымышленный пример изменения статуса. Справка не направляется в вуз.';
+UPDATE request_history SET note='Добавлена отметка о начале работы.' WHERE id='demo-request-alina-history-1' AND note='Вымышленный пример изменения статуса. Справка не направляется в вуз.';
+UPDATE request_history SET note='Обращение зарегистрировано в личном кабинете.' WHERE id='demo-request-mark-history-0' AND note='Вымышленный пример изменения статуса. Справка не направляется в вуз.';
+UPDATE request_history SET note='Добавлена отметка о начале работы.' WHERE id='demo-request-mark-history-1' AND note='Вымышленный пример изменения статуса. Справка не направляется в вуз.';
+UPDATE request_history SET note='В журнале установлен статус «Готова».' WHERE id='demo-request-mark-history-2' AND note='Вымышленный пример изменения статуса. Справка не направляется в вуз.';
+UPDATE events SET note='Подготовьте материалы проекта к защите.' WHERE id='alina-event-0' AND note='Подготовьте демонстрационный проект. Вымышленное учебное событие.';
+UPDATE events SET note='Подготовьте материалы проекта к защите.' WHERE id='mark-event-0' AND note='Подготовьте демонстрационный проект. Вымышленное учебное событие.';
+UPDATE notifications SET title='Расписание вашей группы' WHERE id='alina-notice-0' AND title='Изменилась аудитория';
+UPDATE notifications SET text='Откройте пары на неделю. В расписании указаны время, аудитория и подгруппа.' WHERE id='alina-notice-0' AND text='Моделирование бизнес-процессов: 2026-11-09 в 10:50, аудитория Б-208 вместо А-201. Это вымышленный пример переноса.';
+UPDATE notifications SET href='/schedule?view=week' WHERE id='alina-notice-0' AND href='/schedule?date=2026-11-09&lesson=alina-lesson-1';
+UPDATE notifications SET title='Статус справки обновлён' WHERE id='alina-notice-2' AND title='Справка уже в работе';
+UPDATE notifications SET text='Посмотрите изменения в истории вашего обращения.' WHERE id='alina-notice-2' AND text='Демонстрационный пример: справка с места учёбы находится в работе.';
+UPDATE notifications SET title='Объявления университета' WHERE id='alina-notice-3' AND title='Практикум по бизнес-аналитике';
+UPDATE notifications SET text='В подборке доступны события и конкурсы РЭУ.' WHERE id='alina-notice-3' AND text='13 ноября 2026 в 16:00 — вымышленная встреча о бизнес-аналитике в пространстве А-112.';
+UPDATE notifications SET href='/notifications?tab=university' WHERE id='alina-notice-3' AND href IS NULL;
+UPDATE notifications SET title='Расписание вашей группы' WHERE id='mark-notice-0' AND title='Изменилась аудитория';
+UPDATE notifications SET text='Откройте пары на неделю. В расписании указаны время, аудитория и подгруппа.' WHERE id='mark-notice-0' AND text='Финансы: 2026-11-09 в 13:00, аудитория В-305 вместо Г-114. Это вымышленный пример переноса.';
+UPDATE notifications SET href='/schedule?view=week' WHERE id='mark-notice-0' AND href='/schedule?date=2026-11-09&lesson=mark-lesson-1';
+UPDATE notifications SET title='Статус справки обновлён' WHERE id='mark-notice-2' AND title='Справка готова в демоверсии';
+UPDATE notifications SET text='Посмотрите изменения в истории вашего обращения.' WHERE id='mark-notice-2' AND text='Демонстрационный пример готовой справки. Реальный документ не создаётся.';
+UPDATE notifications SET title='Объявления университета' WHERE id='mark-notice-3' AND title='Практикум по финансовым моделям';
+UPDATE notifications SET text='В подборке доступны события и конкурсы РЭУ.' WHERE id='mark-notice-3' AND text='13 ноября 2026 в 15:00 — вымышленное обсуждение финансовых моделей в Г-115.';
+UPDATE notifications SET href='/notifications?tab=university' WHERE id='mark-notice-3' AND href IS NULL;
