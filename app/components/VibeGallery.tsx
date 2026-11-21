@@ -47,9 +47,10 @@ export default function VibeGallery() {
     });
   }, [shown]);
 
+  const viewing = open !== null;
   // Клавиши работают, пока открыт крупный кадр: Esc закрывает, стрелки листают.
   useEffect(() => {
-    if (!open) return;
+    if (!viewing) return;
     const keys = (event: KeyboardEvent) => {
       // Esc возвращает курсор на ту же плитку, что и кнопка закрытия
       if (event.key === "Escape") { event.preventDefault(); setOpen(null); returnFocus.current?.focus(); }
@@ -73,7 +74,7 @@ export default function VibeGallery() {
     document.body.style.overflow = "hidden";
     closeButton.current?.focus();
     return () => { document.removeEventListener("keydown", keys); document.body.style.overflow = body; };
-  }, [open, step]);
+  }, [viewing, step]);
 
   const close = () => { setOpen(null); returnFocus.current?.focus(); };
 
