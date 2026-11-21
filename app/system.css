@@ -1970,3 +1970,37 @@ details[open] > summary::before { transform: translate(0, -2px) rotate(45deg); }
   .campus-room-number { max-width: 84px; }
   .campus-room-search input { font-size: 16px; }
 }
+
+/* Keep the selected control in place while its results appear. */
+@media (prefers-reduced-motion: no-preference) {
+  .filter-results > :nth-child(-n+10):not(.grade-detail) {
+    animation: filter-result-in var(--dur-3) var(--ease-out) both;
+  }
+  .filter-results > :nth-child(2):not(.grade-detail) { animation-delay: 24ms; }
+  .filter-results > :nth-child(3):not(.grade-detail) { animation-delay: 48ms; }
+  .filter-results > :nth-child(n+4):nth-child(-n+10):not(.grade-detail) { animation-delay: 72ms; }
+
+  :is(.vibe-filters, .notification-filter .segmented, .record-filters) button[aria-pressed="true"] > span,
+  .campus-map-modes button[aria-pressed="true"] > svg,
+  .week-strip button[aria-pressed="true"] > strong {
+    animation: selection-in var(--dur-2) var(--ease-out) both;
+  }
+
+  :is(.vibe-filters, .notification-filter .segmented, .record-filters) button > span { display: inline-block; }
+
+  .route-surface > .schedule-reveal { animation: day-in 210ms var(--ease-out) both; }
+  :is(.lesson-homework, .reu-guide)[open] > :not(summary),
+  .task-form,
+  .profile-group-form {
+    animation: filter-result-in var(--dur-3) var(--ease-out) both;
+  }
+}
+
+@keyframes filter-result-in {
+  from { opacity: .46; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes selection-in {
+  from { opacity: .58; transform: translateY(2px); }
+  to { opacity: 1; transform: none; }
+}

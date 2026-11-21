@@ -96,7 +96,7 @@ export default function VibeGallery() {
       })}
     </div>
 
-    <div className="vibe-grid">
+    <div className="vibe-grid filter-results" key={group}>
       {shown.map((photo, index) => <button key={photo.id} type="button"
         className={"vibe-cell " + photo.shape}
         onClick={event => { returnFocus.current = event.currentTarget; setOpen(photo.id); }}

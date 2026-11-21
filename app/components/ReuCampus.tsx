@@ -100,7 +100,7 @@ export function GroupDirectory() {
       <label>Курс<select value={course} onChange={e=>{setCourse(e.target.value);setLimit(12);}}><option value="">Все курсы</option>{courses.map(c=><option key={c}>{c}</option>)}</select></label>
     </div>
     <div className="reu-list-meta"><strong aria-live="polite">Найдено групп: {rows.length.toLocaleString("ru-RU")}</strong><span>Данные на {dateLabel(snapshot.checkedAt)}</span></div>
-    <ul className="reu-groups">{rows.slice(0,limit).map(row=><li key={[row.school,row.course,row.level,row.code].join("|")}>
+    <ul className="reu-groups filter-results" key={JSON.stringify([school,course])}>{rows.slice(0,limit).map(row=><li key={[row.school,row.course,row.level,row.code].join("|")}>
       <a href={"/timetable?group="+encodeURIComponent(row.code)}>
         <div><strong>{row.code}</strong><small>{shortSchool(row.school)}</small></div><span>{row.course} · {row.level}</span><ArrowRight size={18} aria-label="Открыть расписание группы"/>
       </a>

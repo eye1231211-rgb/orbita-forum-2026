@@ -32,18 +32,29 @@ export default function CampusMap() {
     let focal = focusFor("3");
     const highlights = new Map(buildings.map(item=>[item.id,item.id==="3" ? 1 : 0]));
     let frame = 0;
+    let visible = false;
+    const mobile = matchMedia("(max-width: 820px)");
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
     const state = scene.current;
     function draw() {
       frame = 0;
       const { clientWidth: width, clientHeight: height } = element!;
-      if (width < 50 || height < 50) return;
+      if (width < 50 || height < 50) {
+        visible = false;
+        return;
+      }
+      const target = state.camera;
+      if (!visible) {
+        visible = true;
+        current = mobile.matches && !motion.matches && target.tilt !== Math.PI / 2
+          ? {...target, yaw:target.yaw-.14, tilt:target.tilt-.08}
+          : {...target};
+      }
       const pixelRatio = Math.min(devicePixelRatio || 1, 2);
       const w = Math.round(width * pixelRatio), h = Math.round(height * pixelRatio);
       if (element!.width !== w) element!.width = w;
       if (element!.height !== h) element!.height = h;
       ctx!.setTransform(w / width, 0, 0, h / height, 0, 0);
-      const target = state.camera;
       const selectedFocus = focusFor(state.selection);
       let needsFrame = false;
       const ease = (value:number, goal:number, tolerance=.002) => {

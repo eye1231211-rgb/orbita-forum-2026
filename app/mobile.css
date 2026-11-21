@@ -138,6 +138,17 @@
   }
   .profile-fold[data-open="false"] > .profile-fold-content { display: none; }
   .profile-fold[data-open="true"] .profile-fold-toggle > svg:last-child { transform: rotate(90deg); }
+  @media (prefers-reduced-motion: no-preference) {
+    .profile-fold-toggle > svg:last-child { transition: transform var(--dur-2) var(--ease-out); }
+    .profile-fold[data-open="true"] > .profile-fold-content {
+      animation: profile-fold-in 290ms var(--ease-out) both;
+    }
+  }
+  @keyframes profile-fold-in {
+    from { opacity: .28; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+
   .profile-fold .campus-map { margin-top: 8px; }
   .profile-fold .reu-contacts { margin-top: 8px; }
 }

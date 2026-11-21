@@ -107,7 +107,7 @@ export default function Gradebook({ grades, semester, event, source }: {
         <colgroup><col/><col className="grade-col-score"/><col className="grade-col-mark"/><col className="grade-col-credits"/></colgroup>
         <thead><tr><th scope="col">Дисциплина</th><th scope="col" className="grade-score">Баллы</th>
           <th scope="col" className="grade-mark">Оценка</th><th scope="col" className="grade-credits">З. е.</th></tr></thead>
-        <tbody>
+        <tbody className="filter-results" key={filter}>
           {visible.map(grade => <Fragment key={grade.id}>
             <tr className={selectedId === grade.id ? "is-open" : ""} data-grade-tone={gradeTone(grade)}>
               <th scope="row"><button type="button" aria-expanded={selectedId === grade.id} aria-controls={"grade-" + grade.id}
